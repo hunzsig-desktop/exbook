@@ -1,0 +1,9 @@
+build/bin
+node_modules
+frontend/dist
+.idea
+frontend/package.json.md5
+frontend/wailsjs
+cache
+download
+Srcatcher.exe
