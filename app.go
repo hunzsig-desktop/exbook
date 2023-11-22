@@ -19,3 +19,27 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
+
+// Document Get Documents
+func (a *App) Document() map[string][]string {
+	return map[string][]string{
+		`list`: {
+			"快速开始",
+			"开始1",
+			"开始2",
+			"开始3",
+			"开始4",
+			"开始5",
+			"开始6",
+		},
+		`content`: {
+			"",
+			"开始1",
+			"开始2",
+			"开始3",
+			"开始4",
+			"开始5",
+			"开始6",
+		},
+	}
+}

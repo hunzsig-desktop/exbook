@@ -1,30 +1,54 @@
 import {useEffect, useState} from 'react';
 import hljs from 'highlight.js';
-import './App.css';
+import './App.less';
 import './hlst.css';
+import {Document} from "../wailsjs/go/main/App";
 
 function App() {
-    const [path, setPath] = useState('');
+    const [cate, setCate] = useState(0);
+    const [doc, setDoc] = useState('');
+    const [list, setList] = useState([]);
+    const [content, setContent] = useState([]);
+
+    useEffect(() => {
+        Document().then((v) => {
+            setList(v.list)
+            setContent(v.content)
+            setCate(1)
+            setDoc(v.content[1])
+        })
+    }, []);
 
     useEffect(() => {
         document.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightBlock(block);
         });
-    }, [path])
+    }, [doc])
+
+    const open = (cIdx) => {
+        console.log(cIdx)
+        setCate(cIdx)
+        setDoc(content[cIdx])
+    }
 
     return <div id="app">
-        <div className="alert">
-            <div>本软件资源均来自互联网，仅供个人欣赏、学习之用，任何组织和个人不得公开传播或用于任何商业盈利用途，请自觉于下载后
-                24 小时内删除。
+        <div className="cate">
+            <div className="search">
+                <input placeholder="在此搜索文档内容"/>
             </div>
-            <div>This software resource is sourced from the internet and is only for personal appreciation and
-                learning purposes.
-            </div>
-            <div>No organization or individual is allowed to publicly disseminate or use it for any commercial
-                profit. Please delete it within 24 hours after downloading.
-            </div>
+            {
+                list.map((v, idx) => {
+                    return <div
+                        className={idx === cate ? `focus` : ``}
+                        key={idx}
+                        onClick={() => {
+                            open(idx)
+                        }}
+                    >{v}</div>
+                })
+            }
         </div>
-        <div id="page" dangerouslySetInnerHTML={{__html: path}}/>
+        <div className="md" dangerouslySetInnerHTML={{__html: doc}}/>
     </div>
 }
 
