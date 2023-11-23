@@ -25,6 +25,15 @@ function App() {
     const [doc, setDoc] = useState('');
     let [list, setList] = useState([]);
     let [content, setContent] = useState([]);
+    // 配置
+    const [fontSize, setFontSize] = useState("fs-2")
+    const options = {
+        fontSize: {
+            "fs-1": "小",
+            "fs-2": "中",
+            "fs-3": "大",
+        }
+    }
 
     const mds = {};
     const md = (i) => {
@@ -32,6 +41,10 @@ function App() {
             mds[i] = mi.render(content[i])
         }
         return mds[i]
+    }
+    const mdClass = () => {
+        const c = ["md", fontSize];
+        return c.join(" ");
     }
     const open = (cIdx) => {
         setCate(cIdx)
@@ -48,11 +61,16 @@ function App() {
         })
     }, []);
 
-    // useEffect(() => {
-    //     document.querySelectorAll('pre code').forEach((block) => {
-    //         hljs.highlightBlock(block);
-    //     });
-    // }, [doc])
+    const renderTools = function (key) {
+        const o = Object.entries(options[key])
+        return <span>{
+            o.map((v) => {
+                return <button key={v[0]}
+                               className={v[0] === fontSize ? `focus` : ``}
+                               onClick={() => setFontSize(v[0])}>{v[1]}</button>
+            })
+        }</span>
+    }
 
     return <div id="app">
         <div className="cate">
@@ -73,7 +91,15 @@ function App() {
                 }
             </div>
         </div>
-        <div className="md hljs" dangerouslySetInnerHTML={{__html: doc}}/>
+        <div className={mdClass()}>
+            <div className="tools">
+                <div>
+                    {/*<span>字号</span>*/}
+                    {renderTools("fontSize")}
+                </div>
+            </div>
+            <div className="hljs" dangerouslySetInnerHTML={{__html: doc}}/>
+        </div>
     </div>
 }
 
