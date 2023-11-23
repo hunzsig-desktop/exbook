@@ -1,8 +1,8 @@
 .cate {
+  display: flex;
+  flex-direction: column;
   max-width: 25%;
   min-width: 130px;
-  overflow-y: hidden;
-  padding: 1vh 0.6vw;
   text-align: left;
   background: #272727;
   box-shadow: 2px 0 4px #888888;
@@ -10,26 +10,34 @@
 
   > .search {
     width: 100%;
-    padding: 0;
-    margin-bottom: 0.4vh;
+    margin-bottom: 0.8vh;
+    padding: 1vh 0.6vw;
   }
 
-  > div {
-    width: 100%;
-    padding: 0.2vh 0;
-    border-bottom: 1px solid #555555;
-    cursor: pointer;
-    color: #dddddd;
-  }
+  > .summary {
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border-top: 3px solid #dddddd;
+    padding: 1vh 0.6vw;
 
-  > div:hover {
-    color: #ffefa2;
-    border-bottom: 1px solid #ffefa2;
-  }
+    > div {
+      width: 100%;
+      padding: 0.2vh 0;
+      border-bottom: 1px solid #555555;
+      cursor: pointer;
+      color: #dddddd;
+    }
 
-  > div.focus {
-    color: gold;
-    border-bottom: 1px solid gold;
+    > div:hover {
+      color: #ffefa2;
+      border-bottom: 1px solid #ffefa2;
+    }
+
+    > div.focus {
+      color: gold;
+      border-bottom: 1px solid gold;
+    }
   }
 }
 
@@ -37,4 +45,5 @@
   flex: 1;
   overflow-x: hidden;
   overflow-y: scroll;
+  padding: 2vh 7vh;
 }

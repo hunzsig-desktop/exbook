@@ -7,7 +7,6 @@
 
 html {
     background-color: #ffffff;
-    text-align: center;
 }
 
 body {
@@ -20,5 +19,19 @@ body {
     flex-direction: row;
     width: 100%;
     height: 100vh;
-    text-align: center;
+}
+
+::-webkit-scrollbar {
+    width: 0.4vh;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: gold;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 4px;
+    background-color: #fcfcfc;
+    border: 1px solid #ffffff;
 }

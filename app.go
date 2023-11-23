@@ -2,9 +2,8 @@ package main
 
 import (
 	"context"
-	"embed"
-	"fmt"
-	"io/fs"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -24,26 +23,45 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
+// GetFileInfo 判断文件或目录是否存在
+func GetFileInfo(src string) os.FileInfo {
+	if fileInfo, e := os.Stat(src); e != nil {
+		if os.IsNotExist(e) {
+			return nil
+		}
+		return nil
+	} else {
+		return fileInfo
+	}
+}
+
 // 读取md文件
-func readMD(f embed.FS, src string) ([]string, []string) {
+func readMD(src string) ([]string, []string) {
 	var list []string
 	var content []string
-	err := fs.WalkDir(f, ".", func(path string, d fs.DirEntry, err error) error {
+	srcFileInfo := GetFileInfo(src)
+	if srcFileInfo == nil || !srcFileInfo.IsDir() {
+		return list, content
+	}
+	var err error
+	src, err = filepath.Abs(src)
+	if err != nil {
+		panic(err)
+	}
+	err = filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		if strings.Index(path, src) == -1 {
+		in := info.Name()
+		if strings.Index(path, src) == -1 || strings.Index(in, `.md`) == -1 {
 			return nil
 		}
-		if strings.Index(path, `.md`) != -1 {
-			info, _ := d.Info()
-			b, fErr := f.ReadFile(path)
-			if fErr != nil {
-				return fErr
-			}
-			list = append(list, info.Name())
-			content = append(list, string(b))
+		list = append(list, in[0:len(in)-3])
+		b, fErr := os.ReadFile(path)
+		if fErr != nil {
+			return fErr
 		}
+		content = append(content, string(b))
 		return nil
 	})
 	if err != nil {
@@ -54,28 +72,7 @@ func readMD(f embed.FS, src string) ([]string, []string) {
 
 // Document Get Documents
 func (a *App) Document() map[string][]string {
-	src := `embeds/docs/mds`
-	l, c := readMD(Assets, src)
-	fmt.Print(l, c)
+	pwd, _ := os.Getwd()
+	l, c := readMD(pwd + `/docs/mds`)
 	return map[string][]string{`list`: l, `content`: c}
-	//return map[string][]string{
-	//	`list`: {
-	//		"快速开始",
-	//		"开始1",
-	//		"开始2",
-	//		"开始3",
-	//		"开始4",
-	//		"开始5",
-	//		"开始6",
-	//	},
-	//	`content`: {
-	//		"",
-	//		"开始1",
-	//		"开始2",
-	//		"开始3",
-	//		"开始4",
-	//		"开始5",
-	//		"开始6",
-	//	},
-	//}
 }
