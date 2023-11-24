@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -61,7 +63,21 @@ func readMD(src string) ([]string, []string) {
 		if fErr != nil {
 			return fErr
 		}
-		content = append(content, string(b))
+		mdstr := string(b)
+		// 将图片二进制数据转换为 Base64 编码
+		reg, _ := regexp.Compile(`\(/docs/images/(\w+)\.(\w+)\)`)
+		imgs := reg.FindAllString(mdstr, -1)
+		if len(imgs) > 0 {
+			pwd, _ := os.Getwd()
+			for _, img := range imgs {
+				ip := img[1 : len(img)-1]
+				suffix := ip[len(ip)-3:]
+				im, _ := os.ReadFile(pwd + ip)
+				imb64 := base64.StdEncoding.EncodeToString(im)
+				mdstr = strings.ReplaceAll(mdstr, img, "(data:image/"+suffix+";base64,"+imb64+")")
+			}
+		}
+		content = append(content, mdstr)
 		return nil
 	})
 	if err != nil {

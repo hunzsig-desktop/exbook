@@ -46,9 +46,9 @@
 
 下列问问题方法相信可以帮助你~
 
-![Question](/assets/question1.png)
+![Question](/docs/images/question1.png)
 
-![Question](/assets/question2.png)
+![Question](/docs/images/question2.png)
 
 ### 善用工具
 
@@ -58,31 +58,31 @@
 
 比如我就运用AI帮忙翻译并修改文档
 
-![AiTrans1](/assets/aiTrans1.png)
+![AiTrans1](/docs/images/aiTrans1.png)
 
-![AiTrans2](/assets/aiTrans2.png)
+![AiTrans2](/docs/images/aiTrans2.png)
 
 你也可以试着使用AI帮助你理解代码、优化代码
 
-![AiSee1](/assets/aiSee1.png)
+![AiSee1](/docs/images/aiSee1.png)
 
-![AiSee2](/assets/aiSee2.png)
+![AiSee2](/docs/images/aiSee2.png)
 
-![AiSee3](/assets/aiSee3.png)
+![AiSee3](/docs/images/aiSee3.png)
 
 你也可以试着使用AI帮助你寻找代码里面的bug
 
-![AiSee4](/assets/aiSee4.png)
+![AiSee4](/docs/images/aiSee4.png)
 
 又或者直接让AI帮你干起来
 
 > 指示：冷却改为666秒，名字改为人类灭亡，技能被动触发条件改为单位攻击的时候
 
-![AiDo1](/assets/aiDo1.png)
+![AiDo1](/docs/images/aiDo1.png)
 
 > 指示：参考已有的剑之勇气技能，帮我写一个类似效果的技能，名字叫人类防御终章，原来每层增加攻击改为每层增加防御力15点和移动力30点
 
-![AiDo2](/assets/aiDo2.png)
+![AiDo2](/docs/images/aiDo2.png)
 
 虽然AI说的不一定准确，也肯定会犯错，但只要学会分辨，去除糟粕、留存精华，定能助你一臂之力。
 

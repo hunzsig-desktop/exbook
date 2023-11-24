@@ -10,7 +10,7 @@
 
 > 这里先观察一下 Printer 的目录结构
 
-![Plugins1](/assets/plugins1.png)
+![Plugins1](/docs/images/plugins1.png)
 
 #### 一个插件包含两部分 encrypt 和 plulibrary，这两个目录是固定的
 
@@ -23,7 +23,7 @@
 
 > 这里看一个值得参考的目录结构
 
-![Plugins2](/assets/plugins2.png)
+![Plugins2](/docs/images/plugins2.png)
 
 #### 插件所有的东西编写完成后，并不会自动生效
 

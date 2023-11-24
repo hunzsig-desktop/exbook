@@ -27,7 +27,7 @@ dump({
 })
 ```
 
-![Print](/assets/print.png)
+![Print](/docs/images/print.png)
 
 ### 跟踪调试
 
