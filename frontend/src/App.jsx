@@ -52,11 +52,14 @@ function App() {
         setCate(cIdx)
         let html = md(cIdx) || ``
         if (word.length > 0) {
-            const exp = `>([^<>]*?)(` + word + `)(.*?)<"`
-            const regex = new RegExp(exp, "gim");
-            let result = html.match(regex);
-            console.log(exp, result); // true
-            html = html.replaceAll(regex, `>$1<span class='wf'>$2</span><$3`);
+            let result = html.match(/>(.*?)</gmis);
+            result.forEach((w) => {
+                if (w.toLowerCase().indexOf(word.toLowerCase()) !== -1) {
+                    const regex = new RegExp(word, "gi");
+                    const w2 = w.replaceAll(regex, match => `<span class="wf">${match}</span>`);
+                    html = html.replace(w, w2);
+                }
+            })
         }
         setDoc(html);
     }
