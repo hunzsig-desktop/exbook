@@ -37,6 +37,10 @@ func GetFileInfo(src string) os.FileInfo {
 	}
 }
 
+func wordFocus(str string) string {
+	return `<span class='wf'>` + str + `</span>`
+}
+
 // 读取md文件
 func readMD(src string) ([]string, []string) {
 	var list []string
@@ -54,16 +58,17 @@ func readMD(src string) ([]string, []string) {
 		if err != nil {
 			return err
 		}
-		in := info.Name()
-		if strings.Index(path, src) == -1 || strings.Index(in, `.md`) == -1 {
+		title := info.Name()
+		if strings.Index(path, src) == -1 || strings.Index(title, `.md`) == -1 {
 			return nil
 		}
-		list = append(list, in[0:len(in)-3])
 		b, fErr := os.ReadFile(path)
 		if fErr != nil {
 			return fErr
 		}
+		title = title[0 : len(title)-3]
 		mdstr := string(b)
+		list = append(list, title)
 		// 将图片二进制数据转换为 Base64 编码
 		reg, _ := regexp.Compile(`\(/docs/images/(\w+)\.(\w+)\)`)
 		imgs := reg.FindAllString(mdstr, -1)

@@ -7,6 +7,12 @@ import './md.less';
 import {Document} from "../wailsjs/go/main/App";
 
 function App() {
+    const [cate, setCate] = useState(0);
+    const [doc, setDoc] = useState('');
+    let [list, setList] = useState([]);
+    let [content, setContent] = useState([]);
+    let [word, setWord] = useState('');
+    // 高亮
     const mi = new MarkdownIt({
         html: true,
         linkify: true,
@@ -21,10 +27,6 @@ function App() {
             return ''; // use external default escaping
         }
     })
-    const [cate, setCate] = useState(0);
-    const [doc, setDoc] = useState('');
-    let [list, setList] = useState([]);
-    let [content, setContent] = useState([]);
     // 配置
     const [fontSize, setFontSize] = useState("fs-2")
     const options = {
@@ -48,19 +50,42 @@ function App() {
     }
     const open = (cIdx) => {
         setCate(cIdx)
-        setDoc(md(cIdx))
+        let html = md(cIdx) || ``
+        if (word.length > 2) {
+            const regex = new RegExp(word, 'gi');
+            html = html.replace(regex, match => `<span class="wf">${match}</span>`);
+        }
+        setDoc(html);
     }
 
     useEffect(() => {
         Document().then((v) => {
-            list = v.list
-            content = v.content
+            list = v.list || []
+            content = v.content || []
             setList(list)
             setContent(content)
             open(0)
         })
     }, []);
 
+    const renderSummary = function () {
+        return list.map((v, idx) => {
+            let cn = []
+            if (idx === cate) {
+                cn.push(`focus`);
+            }
+            if (word.length > 2 && v.indexOf(word) === -1) {
+                cn.push(`wf2`);
+            }
+            return <div
+                className={cn.join(` `)}
+                key={idx}
+                onClick={() => {
+                    open(idx)
+                }}
+            >{v}</div>
+        })
+    }
     const renderTools = function (key) {
         const o = Object.entries(options[key])
         return <span>{
@@ -75,20 +100,17 @@ function App() {
     return <div id="app">
         <div className="cate">
             <div className="search">
-                <input placeholder="在此搜索文档内容"/>
+                <input
+                    placeholder="在此搜索"
+                    onChange={(e) => {
+                        word = e.target.value
+                        setWord(word)
+                        open(cate)
+                    }}
+                />
             </div>
             <div className="summary">
-                {
-                    list.map((v, idx) => {
-                        return <div
-                            className={idx === cate ? `focus` : ``}
-                            key={idx}
-                            onClick={() => {
-                                open(idx)
-                            }}
-                        >{v}</div>
-                    })
-                }
+                {renderSummary()}
             </div>
         </div>
         <div className={mdClass()}>
