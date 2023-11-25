@@ -44,8 +44,8 @@ function App() {
         }
         return mds[i]
     }
-    const mdClass = () => {
-        const c = ["md", fontSize];
+    const hljsClass = () => {
+        const c = ["hljs", fontSize];
         return c.join(" ");
     }
     const open = (cIdx) => {
@@ -111,6 +111,7 @@ function App() {
         return <span>{
             o.map((v) => {
                 return <button key={v[0]}
+                               disabled={v[0] === fontSize}
                                className={v[0] === fontSize ? `focus` : ``}
                                onClick={() => setFontSize(v[0])}>{v[1]}</button>
             })
@@ -133,14 +134,14 @@ function App() {
                 {renderSummary()}
             </div>
         </div>
-        <div className={mdClass()}>
+        <div className="md">
             <div className="tools">
                 <div>
                     {/*<span>字号</span>*/}
                     {renderTools("fontSize")}
                 </div>
             </div>
-            <div className="hljs" dangerouslySetInnerHTML={{__html: doc}}/>
+            <div className={hljsClass()} dangerouslySetInnerHTML={{__html: doc}}/>
         </div>
     </div>
 }

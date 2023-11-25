@@ -10,8 +10,9 @@
     background: #d362f6;
     color: #ffffff;
   }
+
   .wf2 {
-    opacity: 0.5;
+    opacity: 0.2;
   }
 }
 
@@ -71,18 +72,23 @@
     line-height: 4vh;
     margin: 0;
     padding: 0 0 0 5vh;
+    background: #272727;
+    box-shadow: 0 1px 5px #272727;
+    z-index: 1;
 
     button {
-      width: 80px;
+      width: 60px;
       margin-right: 4px;
-      border: 1px solid #b0b0b0;
+      border: 0;
       border-radius: 4px;
-      background: #b0b0b0;
+      background: #555555;
       color: #ffffff;
+      cursor: pointer;
     }
 
     button.focus {
-      background: #555555;
+      background: gold;
+      color: #272727;
     }
   }
 
@@ -92,16 +98,16 @@
     overflow-y: scroll;
     padding: 0 7vh 2vh 5vh;
   }
-}
 
-.md.fs-1 {
-  font-size: 90%;
-}
+  .hljs.fs-1 {
+    font-size: 90%;
+  }
 
-.md.fs-2 {
-  font-size: 100%;
-}
+  .hljs.fs-2 {
+    font-size: 100%;
+  }
 
-.md.fs-3 {
-  font-size: 130%;
+  .hljs.fs-3 {
+    font-size: 130%;
+  }
 }

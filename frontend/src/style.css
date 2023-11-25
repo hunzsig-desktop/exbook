@@ -1,8 +1,14 @@
 @font-face {
     font-family: "PingFangSC";
     font-style: normal;
-    font-weight: 400;
     src: url("assets/fonts/PingFangSC.ttf");
+}
+
+@font-face {
+    font-family: 'Fira';
+    src: url('assets/fonts/FiraCode-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
 }
 
 html {
@@ -14,13 +20,18 @@ body {
     font-family: "PingFangSC", sans-serif;
 }
 
+code {
+    font-size: 14px;
+    font-family: "Fira", sans-serif;
+}
+
 ::-webkit-scrollbar {
     width: 0.4vh;
 }
 
 ::-webkit-scrollbar-thumb {
     border-radius: 8px;
-    background-color: #cc2525;
+    background-color: #666666;
 }
 
 ::-webkit-scrollbar-track {
