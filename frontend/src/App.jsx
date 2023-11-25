@@ -66,25 +66,35 @@ function App() {
 
     useEffect(() => {
         Document().then((v) => {
-            list = v.list || []
-            content = v.content || []
-            setList(list)
-            setContent(content)
-            open(0)
+            list = v.list || [];
+            content = v.content || [];
+            setList(list);
+            setContent(content);
+            open(0);
         })
     }, []);
 
     const renderSummary = function () {
+        let inContent = [];
+        content.forEach((v, i) => {
+            if (v.indexOf(word) !== -1) {
+                inContent.push(i);
+            }
+        })
         return list.map((v, idx) => {
             let cn = []
             if (idx === cate) {
                 cn.push(`focus`);
             }
+            let inName = false
             if (word.length > 0) {
-                if (v.indexOf(word) !== -1) {
+                inName = v.indexOf(word) !== -1;
+                if (inName) {
                     v = v.replaceAll(word, match => `<span class="wf">${match}</span>`);
                 }
-                // cn.push(`wf2`);
+            }
+            if (!inName && !inContent.includes(idx)) {
+                cn.push(`wf2`);
             }
             return <div
                 dangerouslySetInnerHTML={{__html: v}}
