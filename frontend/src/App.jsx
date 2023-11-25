@@ -80,16 +80,20 @@ function App() {
             if (idx === cate) {
                 cn.push(`focus`);
             }
-            if (word.length > 0 && v.indexOf(word) === -1) {
-                cn.push(`wf2`);
+            if (word.length > 0) {
+                if (v.indexOf(word) !== -1) {
+                    v = v.replaceAll(word, match => `<span class="wf">${match}</span>`);
+                }
+                // cn.push(`wf2`);
             }
             return <div
+                dangerouslySetInnerHTML={{__html: v}}
                 className={cn.join(` `)}
                 key={idx}
                 onClick={() => {
                     open(idx)
                 }}
-            >{v}</div>
+            />
         })
     }
     const renderTools = function (key) {
