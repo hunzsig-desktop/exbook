@@ -51,9 +51,12 @@ function App() {
     const open = (cIdx) => {
         setCate(cIdx)
         let html = md(cIdx) || ``
-        if (word.length > 2) {
-            const regex = new RegExp(word, 'gi');
-            html = html.replace(regex, match => `<span class="wf">${match}</span>`);
+        if (word.length > 0) {
+            const exp = `>([^<>]*?)(` + word + `)(.*?)<"`
+            const regex = new RegExp(exp, "gim");
+            let result = html.match(regex);
+            console.log(exp, result); // true
+            html = html.replaceAll(regex, `>$1<span class='wf'>$2</span><$3`);
         }
         setDoc(html);
     }
@@ -74,7 +77,7 @@ function App() {
             if (idx === cate) {
                 cn.push(`focus`);
             }
-            if (word.length > 2 && v.indexOf(word) === -1) {
+            if (word.length > 0 && v.indexOf(word) === -1) {
                 cn.push(`wf2`);
             }
             return <div
