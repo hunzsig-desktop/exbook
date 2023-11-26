@@ -119,6 +119,7 @@ function App() {
     }
 
     return <div id="app">
+        <div className="sponsor" onClick={() => window.open("https://afdian.net/a/hunzsig")}>支持一下👍</div>
         <div className="cate">
             <div className="search">
                 <input
