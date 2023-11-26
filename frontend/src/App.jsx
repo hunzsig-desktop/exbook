@@ -88,9 +88,10 @@ function App() {
             }
             let inName = false
             if (word.length > 0) {
-                inName = v.indexOf(word) !== -1;
+                inName = V.toLowerCase().indexOf(word.toLowerCase()) !== -1;
                 if (inName) {
-                    v = v.replaceAll(word, match => `<span class="wf">${match}</span>`);
+                    const regex = new RegExp(word, "gi");
+                    v = v.replaceAll(regex, match => `<span class="wf">${match}</span>`);
                 }
             }
             if (!inName && !inContent.includes(idx)) {
