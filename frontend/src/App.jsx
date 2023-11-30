@@ -88,7 +88,7 @@ function App() {
             }
             let inName = false
             if (word.length > 0) {
-                inName = V.toLowerCase().indexOf(word.toLowerCase()) !== -1;
+                inName = v.toLowerCase().indexOf(word.toLowerCase()) !== -1;
                 if (inName) {
                     const regex = new RegExp(word, "gi");
                     v = v.replaceAll(regex, match => `<span class="wf">${match}</span>`);
