@@ -18,10 +18,10 @@ html {
 body {
     margin: 0;
     font-family: "PingFangSC", sans-serif;
+    font-size: 15px;
 }
 
 code {
-    font-size: 14px;
     font-family: "Fira", sans-serif;
 }
 
