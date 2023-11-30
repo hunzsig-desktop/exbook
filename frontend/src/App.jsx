@@ -74,7 +74,7 @@ function App() {
         })
     }, []);
 
-    const renderSummary = function () {
+    const renderSummary = () => {
         let inContent = [];
         content.forEach((v, i) => {
             if (v.indexOf(word) !== -1) {
@@ -107,7 +107,7 @@ function App() {
             />
         })
     }
-    const renderTools = function (key) {
+    const renderTools = (key) => {
         const o = Object.entries(options[key])
         return <span>{
             o.map((v) => {
@@ -117,6 +117,11 @@ function App() {
                                onClick={() => setFontSize(v[0])}>{v[1]}</button>
             })
         }</span>
+    }
+    const renderTitle = () => {
+        const tit = list[cate].split(`.`)
+        tit.shift()
+        return tit.join(`.`)
     }
 
     return <div id="app">
@@ -143,6 +148,7 @@ function App() {
                     {renderTools("fontSize")}
                 </div>
             </div>
+            <h2 className="title">{renderTitle()}</h2>
             <div className={hljsClass()} dangerouslySetInnerHTML={{__html: doc}}/>
         </div>
     </div>
