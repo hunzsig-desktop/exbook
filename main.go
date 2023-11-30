@@ -20,7 +20,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "LIK框架开发技术文档 v20230903",
+		Title:  "LIK框架开发技术文档",
 		Width:  1600,
 		Height: 900,
 		Menu:   m,
