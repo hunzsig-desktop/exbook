@@ -79,6 +79,12 @@ function App() {
         getDoc();
     }, []);
 
+    const cutOffset = (str) => {
+        const tit = (str || ``).split(`.`)
+        tit.shift()
+        return tit.join(`.`)
+    }
+
     const renderSummary = () => {
         let inContent = [];
         content.forEach((v, i) => {
@@ -87,6 +93,7 @@ function App() {
             }
         })
         return list.map((v, idx) => {
+            v = cutOffset(v)
             let cn = []
             if (idx === cate) {
                 cn.push(`focus`);
@@ -124,11 +131,6 @@ function App() {
             })}
         </span>
     }
-    const renderTitle = () => {
-        const tit = (list[cate] || ``).split(`.`)
-        tit.shift()
-        return tit.join(`.`)
-    }
 
     return <div id="app">
         <div className="sponsor" onClick={() => window.open("https://afdian.net/a/hunzsig")}>支持一下👍</div>
@@ -154,7 +156,7 @@ function App() {
                     {renderTools("fontSize")}
                 </div>
             </div>
-            <h2 className="title">{renderTitle()}</h2>
+            <h2 className="title">{cutOffset(list[cate])}</h2>
             <div className={hljsClass()} dangerouslySetInnerHTML={{__html: doc}}/>
         </div>
     </div>
