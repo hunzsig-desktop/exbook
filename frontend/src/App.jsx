@@ -37,7 +37,7 @@ function App() {
         }
     }
 
-    const mds = {};
+    let mds = {};
     const md = (i) => {
         if (!mds[i]) {
             mds[i] = mi.render(content[i])
@@ -64,14 +64,19 @@ function App() {
         setDoc(html);
     }
 
-    useEffect(() => {
+    const getDoc = () => {
         Document().then((v) => {
+            mds = {};
             list = v.list || [];
             content = v.content || [];
             setList(list);
             setContent(content);
-            open(0);
+            open(cate);
         })
+    }
+
+    useEffect(() => {
+        getDoc();
     }, []);
 
     const renderSummary = () => {
@@ -109,17 +114,18 @@ function App() {
     }
     const renderTools = (key) => {
         const o = Object.entries(options[key])
-        return <span>{
-            o.map((v) => {
+        return <span>
+            <button key="refresh" onClick={getDoc}>📄</button>
+            {o.map((v) => {
                 return <button key={v[0]}
                                disabled={v[0] === fontSize}
                                className={v[0] === fontSize ? `focus` : ``}
                                onClick={() => setFontSize(v[0])}>{v[1]}</button>
-            })
-        }</span>
+            })}
+        </span>
     }
     const renderTitle = () => {
-        const tit = list[cate].split(`.`)
+        const tit = (list[cate] || ``).split(`.`)
         tit.shift()
         return tit.join(`.`)
     }
