@@ -3,6 +3,7 @@ import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import './App.less';
 import './hlst.css';
+import './StyleLight.less';
 import {Document} from "../wailsjs/go/main/App";
 
 function App() {

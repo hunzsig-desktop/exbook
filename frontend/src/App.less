@@ -14,190 +14,190 @@
   .wf2 {
     opacity: 0.2;
   }
-}
 
-.sponsor {
-  position: fixed;
-  right: 1vw;
-  top: 5vh;
-  padding: 0 5px;
-  background: #eeeeee;
-  color: #272727;
-  border: 0;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 99;
-}
-
-.cate {
-  display: flex;
-  flex-direction: column;
-  max-width: 25%;
-  min-width: 130px;
-  text-align: left;
-  background: #272727;
-  box-shadow: 2px 0 4px #888888;
-
-  > .search {
-    width: 100%;
-    margin-bottom: 0.8vh;
-    padding: 1vh 0.6vw;
+  .sponsor {
+    position: fixed;
+    right: 1vw;
+    top: 5vh;
+    padding: 0 5px;
+    background: #eeeeee;
+    color: #272727;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 99;
   }
 
-  > .summary {
-    flex: 1;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    border-top: 3px solid #dddddd;
-    padding: 1vh 0.6vw;
+  .cate {
+    display: flex;
+    flex-direction: column;
+    max-width: 25%;
+    min-width: 130px;
+    text-align: left;
+    background: #272727;
+    box-shadow: 2px 0 4px #888888;
 
-    > div {
+    > .search {
       width: 100%;
-      padding: 0.2vh 0;
-      border-bottom: 1px solid #555555;
-      cursor: pointer;
-      color: #dddddd;
+      margin-bottom: 0.8vh;
+      padding: 1vh 0.6vw;
     }
 
-    > div:hover {
-      color: #ffefa2;
-      border-bottom: 1px solid #ffefa2;
-    }
+    > .summary {
+      flex: 1;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      border-top: 3px solid #dddddd;
+      padding: 1vh 0.6vw;
 
-    > div.focus {
-      color: gold;
-      border-bottom: 1px solid gold;
-    }
-  }
-}
+      > div {
+        width: 100%;
+        padding: 0.2vh 0;
+        border-bottom: 1px solid #555555;
+        cursor: pointer;
+        color: #dddddd;
+      }
 
-.md {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  padding: 0;
+      > div:hover {
+        color: #ffefa2;
+        border-bottom: 1px solid #ffefa2;
+      }
 
-  .tools {
-    height: 40px;
-    line-height: 40px;
-    margin: 0;
-    padding: 0 0 0 5vh;
-    background: #272727;
-    z-index: 1;
-
-    button {
-      width: 4vw;
-      margin-right: 0.2vw;
-      border: 0;
-      border-radius: 0.2vw;
-      background: #555555;
-      color: #ffffff;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #fce574;
-      color: #272727;
-    }
-
-    button:active {
-      background: #fcc674;
-      color: #272727;
-    }
-
-    button.focus {
-      background: gold;
-      color: #272727;
+      > div.focus {
+        color: gold;
+        border-bottom: 1px solid gold;
+      }
     }
   }
 
-  .title {
-    height: 30px;
-    line-height: 30px;
-    margin: 0;
-    padding: 0 7vh 0.6vh 5vh;
-    background: #272727;
-    color: #ffffff;
-    box-shadow: 0 3px 4px #444444;
-    z-index: 1;
-  }
-
-  .hljs {
+  .md {
+    display: flex;
+    flex-direction: column;
     flex: 1;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    padding: 0 7vh 2vh 5vh;
-  }
+    width: 100%;
+    height: 100%;
+    padding: 0;
 
-  .hljs.fs-1 {
-    font-size: 90%;
-  }
+    .tools {
+      height: 40px;
+      line-height: 40px;
+      margin: 0;
+      padding: 0 0 0 5vh;
+      background: #272727;
+      z-index: 1;
 
-  .hljs.fs-2 {
-    font-size: 100%;
-  }
+      button {
+        width: 4vw;
+        margin-right: 0.2vw;
+        border: 0;
+        border-radius: 0.2vw;
+        background: #555555;
+        color: #ffffff;
+        cursor: pointer;
+      }
 
-  .hljs.fs-3 {
-    font-size: 130%;
-  }
+      button:hover {
+        background: #fce574;
+        color: #272727;
+      }
 
-  h1, h2 {
-    color: #2475ee;
-  }
+      button:active {
+        background: #fcc674;
+        color: #272727;
+      }
 
-  li {
-    color: #606c71;
-  }
+      button.focus {
+        background: gold;
+        color: #272727;
+      }
+    }
 
-  img {
-    width: auto;
-    max-width: 100%;
-    margin: 20px 0;
-  }
+    .title {
+      height: 30px;
+      line-height: 30px;
+      margin: 0;
+      padding: 0 7vh 0.6vh 5vh;
+      background: #272727;
+      color: #ffffff;
+      box-shadow: 0 3px 4px #444444;
+      z-index: 1;
+    }
 
-  blockquote {
-    padding: 0 0.4vh;
-    margin-left: 0;
-    color: #184a75;
-    border-left: 0.3rem solid #dce6f0;
-  }
+    .hljs {
+      flex: 1;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      padding: 0 7vh 2vh 5vh;
+    }
 
-  a {
-    color: #1b51a3;
-    text-decoration: none;
-    background-color: transparent;
-  }
+    .hljs.fs-1 {
+      font-size: 90%;
+    }
 
-  a:hover {
-    color: #2475ee;
-    text-shadow: 0 0 5px #8db6f5;
-  }
+    .hljs.fs-2 {
+      font-size: 100%;
+    }
 
-  pre {
-    border: 2px solid #eeeeee;
-    border-radius: 4px;
-    background: #333;
-    color: #ffffff
-  }
+    .hljs.fs-3 {
+      font-size: 130%;
+    }
 
-  code {
-    border-radius: 4px;
-    display: block;
-    overflow-x: auto;
-    padding: 1em;
-    word-break: break-all;
-    white-space: pre-wrap;
-  }
+    h1, h2 {
+      color: #2475ee;
+    }
 
-  .colour {
-    height: 30px;
-    line-height: 30px;
-    padding-left: 20px;
-    color: whitesmoke;
-    font-weight: 600;
-    text-shadow: -1px 0 #555555, 0 1px #555555, 1px 0 #555555,0 -1px #555555;
-  }
+    li {
+      color: #606c71;
+    }
 
+    img {
+      width: auto;
+      max-width: 100%;
+      margin: 20px 0;
+    }
+
+    blockquote {
+      padding: 0 0.4vh;
+      margin-left: 0;
+      color: #184a75;
+      border-left: 0.3rem solid #dce6f0;
+    }
+
+    a {
+      color: #1b51a3;
+      text-decoration: none;
+      background-color: transparent;
+    }
+
+    a:hover {
+      color: #2475ee;
+      text-shadow: 0 0 5px #8db6f5;
+    }
+
+    pre {
+      border: 2px solid #eeeeee;
+      border-radius: 4px;
+      background: #333;
+      color: #ffffff
+    }
+
+    code {
+      border-radius: 4px;
+      display: block;
+      overflow-x: auto;
+      padding: 1em;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    .colour {
+      height: 30px;
+      line-height: 30px;
+      padding-left: 20px;
+      color: whitesmoke;
+      font-weight: 600;
+      text-shadow: -1px 0 #555555, 0 1px #555555, 1px 0 #555555,0 -1px #555555;
+    }
+
+  }
 }
