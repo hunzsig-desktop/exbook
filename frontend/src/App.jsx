@@ -3,10 +3,10 @@ import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import './App.less';
 import './hlst.css';
-import './md.less';
 import {Document} from "../wailsjs/go/main/App";
 
 function App() {
+    const [style, setStyle] = useState('');
     const [cate, setCate] = useState(0);
     const [doc, setDoc] = useState('');
     let [list, setList] = useState([]);
@@ -122,7 +122,10 @@ function App() {
     const renderTools = (key) => {
         const o = Object.entries(options[key])
         return <span>
-            <button key="refresh" onClick={getDoc}>📄</button>
+            <button key="refresh" onClick={getDoc}>📥</button>
+            <button key="style" onClick={() => {
+                setStyle(style === '' ? 'light' : '')
+            }}>{style === '' ? '🌚' : '🌞'}</button>
             {o.map((v) => {
                 return <button key={v[0]}
                                disabled={v[0] === fontSize}
@@ -132,7 +135,7 @@ function App() {
         </span>
     }
 
-    return <div id="app">
+    return <div id="app" className={style}>
         <div className="sponsor" onClick={() => window.open("https://afdian.net/a/hunzsig")}>支持一下👍</div>
         <div className="cate">
             <div className="search">
