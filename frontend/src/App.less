@@ -16,16 +16,26 @@
   }
 
   .sponsor {
+    display: compact;
     position: fixed;
     right: 1vw;
-    top: 5vh;
-    padding: 0 5px;
-    background: #eeeeee;
+    top: 2.3vh;
+    height: 46px;
+    padding: 0 6px;
+    background: #aff84f;
     color: #272727;
     border: 0;
     border-radius: 4px;
     cursor: pointer;
     z-index: 99;
+  }
+
+  .sponsor:hover{
+    background: #C7FF7B;
+  }
+
+  .sponsor > .tabler-icon {
+    height: 20px;
   }
 
   .cate {
@@ -87,7 +97,9 @@
       z-index: 1;
 
       button {
+        height: 24px;
         width: 4vw;
+        margin-top: 9px;
         margin-right: 0.2vw;
         border: 0;
         border-radius: 0.2vw;
@@ -109,6 +121,11 @@
       button.focus {
         background: gold;
         color: #272727;
+      }
+
+      button > .tabler-icon {
+        height: 18px;
+        margin-top: 2px;
       }
     }
 

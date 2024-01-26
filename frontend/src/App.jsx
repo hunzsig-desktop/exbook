@@ -5,6 +5,15 @@ import './App.less';
 import './hlst.css';
 import './StyleLight.less';
 import {Document} from "../wailsjs/go/main/App";
+import {
+    IconBookDownload,
+    IconBulb,
+    IconBulbOff,
+    IconTextDecrease,
+    IconTextIncrease,
+    IconTextOrientation,
+    IconThumbUp
+} from "@tabler/icons-react";
 
 function App() {
     const [style, setStyle] = useState('');
@@ -32,9 +41,9 @@ function App() {
     const [fontSize, setFontSize] = useState("fs-2")
     const options = {
         fontSize: {
-            "fs-1": "小",
-            "fs-2": "中",
-            "fs-3": "大",
+            "fs-1": <IconTextDecrease/>,
+            "fs-2": <IconTextIncrease/>,
+            "fs-3": <IconTextOrientation/>,
         }
     }
 
@@ -123,21 +132,26 @@ function App() {
     const renderTools = (key) => {
         const o = Object.entries(options[key])
         return <span>
-            <button key="refresh" onClick={getDoc}>📥</button>
+            <button key="refresh" onClick={getDoc}><IconBookDownload/></button>
             <button key="style" onClick={() => {
                 setStyle(style === '' ? 'light' : '')
-            }}>{style === '' ? '🌚' : '🌞'}</button>
+            }}>{style === '' ? <IconBulbOff/> : <IconBulb/>}</button>
             {o.map((v) => {
                 return <button key={v[0]}
                                disabled={v[0] === fontSize}
                                className={v[0] === fontSize ? `focus` : ``}
                                onClick={() => setFontSize(v[0])}>{v[1]}</button>
             })}
-        </span>
+                </span>
     }
 
     return <div id="app" className={style}>
-        <div className="sponsor" onClick={() => window.open("https://afdian.net/a/hunzsig")}>支持一下👍</div>
+        <div className="sponsor" onClick={() => window.open("https://afdian.net/a/hunzsig")}>
+            <div>支 持 一 下</div>
+            <IconThumbUp/>
+            <IconThumbUp/>
+            <IconThumbUp/>
+        </div>
         <div className="cate">
             <div className="search">
                 <input
