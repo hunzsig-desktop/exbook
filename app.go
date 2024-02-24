@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	nano "github.com/matoous/go-nanoid/v2"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -37,63 +38,76 @@ func GetFileInfo(src string) os.FileInfo {
 	}
 }
 
-func wordFocus(str string) string {
-	return `<span class='wf'>` + str + `</span>`
+type md struct {
+	Key      string `json:"key"`
+	Title    string `json:"title"`
+	Content  string `json:"content"`
+	Children []md   `json:"children"`
 }
 
 // 读取md文件
-func readMD(src string) ([]string, []string) {
-	var list []string
-	var content []string
+func readMD(src string) []md {
+	var data []md
 	srcFileInfo := GetFileInfo(src)
 	if srcFileInfo == nil || !srcFileInfo.IsDir() {
-		return list, content
+		return data
 	}
 	var err error
 	src, err = filepath.Abs(src)
 	if err != nil {
 		panic(err)
 	}
-	err = filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		title := info.Name()
-		if strings.Index(path, src) == -1 || strings.Index(title, `.md`) == -1 {
-			return nil
-		}
-		b, fErr := os.ReadFile(path)
-		if fErr != nil {
-			return fErr
-		}
-		title = title[0 : len(title)-3]
-		mdstr := string(b)
-		list = append(list, title)
-		// 将图片二进制数据转换为 Base64 编码
-		reg, _ := regexp.Compile(`\(/docs/images/(\w+)\.(\w+)\)`)
-		imgs := reg.FindAllString(mdstr, -1)
-		if len(imgs) > 0 {
-			pwd, _ := os.Getwd()
-			for _, img := range imgs {
-				ip := img[1 : len(img)-1]
-				suffix := ip[len(ip)-3:]
-				im, _ := os.ReadFile(pwd + ip)
-				imb64 := base64.StdEncoding.EncodeToString(im)
-				mdstr = strings.ReplaceAll(mdstr, img, "(data:image/"+suffix+";base64,"+imb64+")")
+
+	files, err2 := os.ReadDir(src)
+	if err2 != nil {
+		panic(err2)
+	}
+	for _, info := range files {
+		name := info.Name()
+		path := src + "/" + name
+		key, _ := nano.New(9)
+		if info.IsDir() {
+			children := readMD(path)
+			data = append(data, md{
+				Key:      key,
+				Title:    name,
+				Content:  ``,
+				Children: children,
+			})
+		} else {
+			if strings.Index(name, `.md`) != -1 {
+				b, fErr := os.ReadFile(path)
+				if fErr == nil {
+					title := name[0 : len(name)-3]
+					mdstr := string(b)
+					// 将图片二进制数据转换为 Base64 编码
+					reg, _ := regexp.Compile(`\(/docs/images/(\w+)\.(\w+)\)`)
+					imgs := reg.FindAllString(mdstr, -1)
+					if len(imgs) > 0 {
+						pwd, _ := os.Getwd()
+						for _, img := range imgs {
+							ip := img[1 : len(img)-1]
+							suffix := ip[len(ip)-3:]
+							im, _ := os.ReadFile(pwd + ip)
+							imb64 := base64.StdEncoding.EncodeToString(im)
+							mdstr = strings.ReplaceAll(mdstr, img, "(data:image/"+suffix+";base64,"+imb64+")")
+						}
+					}
+					data = append(data, md{
+						Key:      key,
+						Title:    title,
+						Content:  mdstr,
+						Children: nil,
+					})
+				}
 			}
 		}
-		content = append(content, mdstr)
-		return nil
-	})
-	if err != nil {
-		panic(err)
 	}
-	return list, content
+	return data
 }
 
 // Document Get Documents
-func (a *App) Document() map[string][]string {
+func (a *App) Document() []md {
 	pwd, _ := os.Getwd()
-	l, c := readMD(pwd + `/docs/mds`)
-	return map[string][]string{`list`: l, `content`: c}
+	return readMD(pwd + `/docs/mds`)
 }

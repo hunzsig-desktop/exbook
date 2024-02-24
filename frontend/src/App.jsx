@@ -18,11 +18,12 @@ import {Document} from "../wailsjs/go/main/App";
 
 function App() {
     const [style, setStyle] = useState('light');
-    const [cate, setCate] = useState(0);
+    const [cate, setCate] = useState('');
     const [doc, setDoc] = useState('');
-    let [list, setList] = useState([]);
-    let [content, setContent] = useState([]);
+    let [summary, setSummary] = useState([]);
     let [word, setWord] = useState('');
+    let [outWord, setOutWord] = useState([]);
+    let [tckv, setTCKV] = useState({title: {}, content: {}});
     const [mdSize, setMDSize] = useState(3);
     // 高亮
     const mi = new MarkdownIt({
@@ -38,15 +39,21 @@ function App() {
     })
     //
     let mds = {};
-    const md = (i) => {
-        if (!mds[i]) {
-            mds[i] = mi.render(content[i] || ``)
-        }
-        return mds[i]
+    const title = (k) => {
+        const str = tckv.title[k] || ``
+        const tit = str.split(`.`)
+        tit.shift()
+        return tit.join(`.`)
     }
-    const open = (cIdx) => {
-        setCate(cIdx)
-        let html = md(cIdx) || ``
+    const md = (k) => {
+        if (!mds[k]) {
+            mds[k] = mi.render(tckv.content[k] || ``)
+        }
+        return mds[k]
+    }
+    const open = (key) => {
+        setCate(key)
+        let html = md(key) || ``
         if (word.length > 0) {
             let result = html.match(/>(.*?)</gmis);
             result.forEach((w) => {
@@ -60,26 +67,33 @@ function App() {
         setDoc(html);
     }
 
+    const getData = (data, kv) => {
+        data.map((v) => {
+            kv.title[v.key] = v.title
+            if (v.children === null) {
+                kv.content[v.key] = v.content
+            } else {
+                getData(v.children, kv)
+            }
+        })
+        return kv
+    }
     const getDoc = () => {
         Document().then((v) => {
             mds = {};
-            list = v.list || [];
-            content = v.content || [];
-            setList(list);
-            setContent(content);
-            open(cate);
+            summary = v;
+            setSummary(summary);
+            tckv = getData(summary, {title: {}, content: {}})
+            setTCKV(tckv)
+            if (summary.length > 0) {
+                open(summary[0].key);
+            }
         })
     }
 
     useEffect(() => {
         getDoc();
     }, []);
-
-    const cutOffset = (str) => {
-        const tit = (str || ``).split(`.`)
-        tit.shift()
-        return tit.join(`.`)
-    }
 
     const toggleLight = () => {
         const s = style === 'light' ? 'dark' : 'light'
@@ -91,46 +105,33 @@ function App() {
         }
     }
 
-    const renderSummary = () => {
-        let inContent = [];
-        content.forEach((v, i) => {
-            if (v.indexOf(word) !== -1) {
-                inContent.push(i);
+    const renderMenu = (data) => {
+        return data.map((v) => {
+            let tit = title(v.key)
+            if (v.children === null) {
+                let cn = []
+                let outName = true
+                if (word.length > 0) {
+                    outName = tit.toLowerCase().indexOf(word.toLowerCase()) === -1;
+                    if (!outName) {
+                        const regex = new RegExp(word, "gi");
+                        tit = tit.replaceAll(regex, match => `<span class="wf">${match}</span>`);
+                    }
+                }
+                if (outName && outWord.includes(v.key)) {
+                    cn.push(`wf2`);
+                }
+                return <Menu.Item
+                    key={v.key}
+                    className={cn.join(` `)}
+                    onClick={() => {
+                        open(v.key)
+                    }}
+                ><span dangerouslySetInnerHTML={{__html: tit}}></span></Menu.Item>
+            } else {
+                return <Menu.SubMenu key={v.key} title={tit}>{renderMenu(v.children)}</Menu.SubMenu>
             }
         })
-        return <Menu className="summary" mode='vertical' defaultSelectedKeys={['1']}>
-            {
-                list.map((v, idx) => {
-                    v = cutOffset(v)
-                    let cn = []
-                    if (idx === cate) {
-                        cn.push(`focus`);
-                    }
-                    let inName = false
-                    if (word.length > 0) {
-                        inName = v.toLowerCase().indexOf(word.toLowerCase()) !== -1;
-                        if (inName) {
-                            const regex = new RegExp(word, "gi");
-                            v = v.replaceAll(regex, match => `<span class="wf">${match}</span>`);
-                        }
-                    }
-                    if (!inName && !inContent.includes(idx)) {
-                        cn.push(`wf2`);
-                    }
-                    return <Menu.Item
-                        key={idx}
-                        className={cn.join(` `)}
-                        onClick={() => {
-                            open(idx)
-                        }}
-                    ><span dangerouslySetInnerHTML={{__html: v}}></span></Menu.Item>
-                })
-            }
-            <Menu.Item key='1'>Home</Menu.Item>
-            <Menu.Item key='2'>Solution</Menu.Item>
-            <Menu.Item key='3'>Cloud Service</Menu.Item>
-            <Menu.Item key='4'>Cooperation</Menu.Item>
-        </Menu>
     }
     return <div id="app" className={style}>
         <div className="sponsor" onClick={() => window.open("https://afdian.net/a/hunzsig")}>
@@ -150,11 +151,22 @@ function App() {
                     onChange={(val) => {
                         word = val;
                         setWord(word);
+                        outWord = [];
+                        if (word.length > 0) {
+                            for (const k in tckv.content) {
+                                if (tckv.content[k].toLowerCase().indexOf(word.toLowerCase()) === -1) {
+                                    outWord.push(k);
+                                }
+                            }
+                        }
+                        setOutWord(outWord);
                         open(cate);
                     }}
                 />
             </div>
-            {renderSummary()}
+            <Menu className="summary" mode='vertical' selectedKeys={[cate]}>
+                {renderMenu(summary)}
+            </Menu>
         </div>
         <div className="md">
             <Space size='large' className="tools">
@@ -186,7 +198,7 @@ function App() {
                         onClick={() => setMDSize(mdSize + 1)}></Button>
                 </Button.Group>
             </Space>
-            <h2 className="title">{cutOffset(list[cate])}</h2>
+            <h2 className="title">{title(cate)}</h2>
             <Divider/>
             <div className={["content", "s" + mdSize].join(" ")} dangerouslySetInnerHTML={{__html: doc}}/>
         </div>
