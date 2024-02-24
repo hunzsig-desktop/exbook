@@ -17,12 +17,15 @@ html {
 
 body {
     margin: 0;
-    font-family: "PingFangSC", sans-serif;
+    font-family: "PingFangSC", sans-serif !important;
     font-size: 15px;
+    background-color: var(--color-bg-1);
+    color: var(--color-text-1);
+    color-scheme: dark;
 }
 
 code {
-    font-family: "Fira", sans-serif;
+    font-family: "Fira", sans-serif !important;
 }
 
 ::-webkit-scrollbar {
@@ -31,11 +34,11 @@ code {
 
 ::-webkit-scrollbar-thumb {
     border-radius: 8px;
-    background-color: #666666;
+    /*background-color: #666666;*/
 }
 
 ::-webkit-scrollbar-track {
     border-radius: 4px;
-    background-color: #fcfcfc;
-    border: 1px solid #ffffff;
+    /*background-color: #fcfcfc;*/
+    /*border: 1px solid #ffffff;*/
 }

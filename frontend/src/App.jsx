@@ -1,19 +1,20 @@
 import {useEffect, useState} from 'react';
+import {Button, Input, Notification, Space, Tooltip} from '@arco-design/web-react';
+import {
+    IconCloudDownload,
+    IconMoon,
+    IconSearch,
+    IconSun,
+    IconThumbUp,
+    IconZoomIn,
+    IconZoomOut
+} from '@arco-design/web-react/icon';
+import "@arco-design/web-react/dist/css/arco.css";
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import './App.less';
 import './hlst.css';
-import './StyleLight.less';
 import {Document} from "../wailsjs/go/main/App";
-import {
-    IconBookDownload,
-    IconBulb,
-    IconBulbOff,
-    IconTextDecrease,
-    IconTextIncrease,
-    IconTextOrientation,
-    IconThumbUp
-} from "@tabler/icons-react";
 
 function App() {
     const [style, setStyle] = useState('');
@@ -22,12 +23,10 @@ function App() {
     let [list, setList] = useState([]);
     let [content, setContent] = useState([]);
     let [word, setWord] = useState('');
+    const [mdSize, setMDSize] = useState(3);
     // 高亮
     const mi = new MarkdownIt({
-        html: true,
-        linkify: true,
-        typographer: true,
-        highlight: function (str, lang) {
+        html: true, linkify: true, typographer: true, highlight: function (str, lang) {
             if (lang && hljs.getLanguage(lang)) {
                 try {
                     return hljs.highlight(str, {language: lang}).value;
@@ -37,26 +36,13 @@ function App() {
             return ''; // use external default escaping
         }
     })
-    // 配置
-    const [fontSize, setFontSize] = useState("fs-2")
-    const options = {
-        fontSize: {
-            "fs-1": <IconTextDecrease/>,
-            "fs-2": <IconTextIncrease/>,
-            "fs-3": <IconTextOrientation/>,
-        }
-    }
-
+    //
     let mds = {};
     const md = (i) => {
         if (!mds[i]) {
             mds[i] = mi.render(content[i] || ``)
         }
         return mds[i]
-    }
-    const hljsClass = () => {
-        const c = ["hljs", fontSize];
-        return c.join(" ");
     }
     const open = (cIdx) => {
         setCate(cIdx)
@@ -82,6 +68,9 @@ function App() {
             setList(list);
             setContent(content);
             open(cate);
+            Notification.success({
+                title: '读取成功', content: '文档数据已载入。',
+            })
         })
     }
 
@@ -93,6 +82,16 @@ function App() {
         const tit = (str || ``).split(`.`)
         tit.shift()
         return tit.join(`.`)
+    }
+
+    const toggleLight = () => {
+        const s = style === '' ? 'light' : ''
+        setStyle(s)
+        if (s === '') {
+            document.body.setAttribute('arco-theme', 'dark');
+        } else {
+            document.body.removeAttribute('arco-theme');
+        }
     }
 
     const renderSummary = () => {
@@ -129,37 +128,26 @@ function App() {
             />
         })
     }
-    const renderTools = (key) => {
-        const o = Object.entries(options[key])
-        return <span>
-            <button key="refresh" onClick={getDoc}><IconBookDownload/></button>
-            <button key="style" onClick={() => {
-                setStyle(style === '' ? 'light' : '')
-            }}>{style === '' ? <IconBulbOff/> : <IconBulb/>}</button>
-            {o.map((v) => {
-                return <button key={v[0]}
-                               disabled={v[0] === fontSize}
-                               className={v[0] === fontSize ? `focus` : ``}
-                               onClick={() => setFontSize(v[0])}>{v[1]}</button>
-            })}
-                </span>
-    }
-
     return <div id="app" className={style}>
         <div className="sponsor" onClick={() => window.open("https://afdian.net/a/hunzsig")}>
-            <div>支 持 一 下</div>
+            <div>支持开发者</div>
+            <IconThumbUp/>
+            <IconThumbUp/>
             <IconThumbUp/>
             <IconThumbUp/>
             <IconThumbUp/>
         </div>
         <div className="cate">
             <div className="search">
-                <input
+                <Input
+                    size="small"
+                    // style={{width: 350, margin: 12}}
+                    prefix={<IconSearch/>}
                     placeholder="在此搜索"
-                    onChange={(e) => {
-                        word = e.target.value
-                        setWord(word)
-                        open(cate)
+                    onChange={(val) => {
+                        word = val;
+                        setWord(word);
+                        open(cate);
                     }}
                 />
             </div>
@@ -168,14 +156,32 @@ function App() {
             </div>
         </div>
         <div className="md">
-            <div className="tools">
-                <div>
-                    {/*<span>字号</span>*/}
-                    {renderTools("fontSize")}
-                </div>
-            </div>
+            <Space size='large' className="tools">
+                <Button.Group>
+                    <Tooltip position='bottom' trigger='hover' content='更新md文档到阅读器'>
+                        <Button type='primary' icon={<IconCloudDownload/>} onClick={getDoc}>读取文档</Button>
+                    </Tooltip>
+                    <Tooltip position='bottom' trigger='hover' content='主题色调'>
+                        <Button
+                            type='primary'
+                            icon={style === '' ? <IconMoon/> : <IconSun/>}
+                            onClick={toggleLight}
+                        >{style === '' ? '暗黑' : '明亮'}</Button>
+                    </Tooltip>
+                    <Button
+                        type='secondary'
+                        icon={<IconZoomOut/>}
+                        disabled={mdSize <= 1}
+                        onClick={() => setMDSize(mdSize - 1)}></Button>
+                    <Button
+                        type='secondary'
+                        icon={<IconZoomIn/>}
+                        disabled={mdSize >= 5}
+                        onClick={() => setMDSize(mdSize + 1)}></Button>
+                </Button.Group>
+            </Space>
             <h2 className="title">{cutOffset(list[cate])}</h2>
-            <div className={hljsClass()} dangerouslySetInnerHTML={{__html: doc}}/>
+            <div className={["hljs", "s" + mdSize].join(" ")} dangerouslySetInnerHTML={{__html: doc}}/>
         </div>
     </div>
 }
