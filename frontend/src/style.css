@@ -12,7 +12,7 @@
 }
 
 html {
-    background-color: #ffffff;
+    background-color: var(--color-bg-1);
 }
 
 body {
@@ -29,16 +29,10 @@ code {
 }
 
 ::-webkit-scrollbar {
-    width: 0.4vh;
+    width: 0.3vh;
 }
 
 ::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-    /*background-color: #666666;*/
-}
-
-::-webkit-scrollbar-track {
     border-radius: 4px;
-    /*background-color: #fcfcfc;*/
-    /*border: 1px solid #ffffff;*/
+    background-color: #555555;
 }
