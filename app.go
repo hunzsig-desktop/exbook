@@ -37,18 +37,20 @@ func (a *App) GetConf() ConfJson {
 	_ = json.Unmarshal(j, &conf)
 	if len(j) == 0 {
 		conf = ConfJson{
-			Theme:  "light",
+			Theme:  `light`,
 			MdSize: 3,
+			Cate:   ``,
 		}
 	}
 	fmt.Println(conf)
 	return conf
 }
 
-func (a *App) SetConf(theme string, mdSize int) {
+func (a *App) SetConf(theme string, mdSize int, cate string) {
 	conf := &ConfJson{
 		Theme:  theme,
 		MdSize: mdSize,
+		Cate:   cate,
 	}
 	j, _ := json.Marshal(conf)
 	file := homeFile()

@@ -19,7 +19,7 @@ import {Document, GetConf, SetConf} from "../wailsjs/go/main/App";
 function App() {
     const [style, setStyle] = useState('light');
     const [cate, setCate] = useState('');
-    const [doc, setDoc] = useState('');
+    const [doc, setDoc] = useState({content: '', detail: ''});
     let [summary, setSummary] = useState([]);
     let [word, setWord] = useState('');
     let [outWord, setOutWord] = useState([]);
@@ -39,6 +39,7 @@ function App() {
     })
     //
     let mds = {};
+    let details = {};
     const title = (k) => {
         const str = tckv.title[k] || ``
         const tit = str.split(`.`)
@@ -51,9 +52,13 @@ function App() {
         }
         return mds[k]
     }
-    const open = (key) => {
-        setCate(key)
-        let html = md(key) || ``
+    const detail = (k) => {
+        if (!details[k]) {
+            details[k] = mi.render(tckv.detail[k] || ``)
+        }
+        return details[k]
+    }
+    const match = (html) => {
         if (word.length > 0) {
             let result = html.match(/>(.*?)</gmis);
             result.forEach((w) => {
@@ -64,59 +69,64 @@ function App() {
                 }
             })
         }
-        setDoc(html);
+        return html
     }
-
+    const open = (key) => {
+        setCate(key)
+        let c = md(key) || ``
+        let d = detail(key) || ``
+        setDoc({content: match(c), detail: match(d)});
+        setConf(style, mdSize, key);
+    }
     const getData = (data, kv) => {
         data.map((v) => {
             kv.title[v.key] = v.title
             if (v.children === null) {
                 kv.content[v.key] = v.content
+                kv.detail[v.key] = v.detail
             } else {
                 getData(v.children, kv)
             }
         })
         return kv
     }
-    const getDoc = () => {
+    const refresh = () => {
         Document().then((v) => {
             mds = {};
             summary = v;
             setSummary(summary);
-            tckv = getData(summary, {title: {}, content: {}})
+            tckv = getData(summary, {title: {}, content: {}, detail: {}})
             setTCKV(tckv)
-            if (summary.length > 0) {
-                open(summary[0].key);
-            }
+            GetConf().then((v) => {
+                if (v.theme !== style) {
+                    setStyle(v.theme)
+                    if (v.theme === 'dark') {
+                        document.body.setAttribute('arco-theme', 'dark');
+                    } else {
+                        document.body.removeAttribute('arco-theme');
+                    }
+                }
+                if (v.mdSize !== mdSize) {
+                    setMDSize(mdSize)
+                }
+                if (v.cate !== cate && tckv.title[v.cate] !== undefined) {
+                    open(v.cate)
+                } else {
+                    if (summary.length > 0) {
+                        open(summary[0].key);
+                    }
+                }
+            })
         })
     }
-    const getConf = () => {
-        GetConf().then((v) => {
-            if (v.theme !== style || v.mdSize !== mdSize) {
-                conf(v.theme, v.mdSize)
-            }
-        })
-    }
-    const setConf = (theme, fontSize) => {
-        SetConf(theme, fontSize).then(() => {
+    const setConf = (theme, fontSize, cate) => {
+        SetConf(theme, fontSize, cate).then(() => {
         })
     }
 
     useEffect(() => {
-        getConf();
-        getDoc();
+        refresh();
     }, []);
-
-    const conf = (theme, mdSize) => {
-        setStyle(theme)
-        setMDSize(mdSize)
-        if (theme === 'dark') {
-            document.body.setAttribute('arco-theme', 'dark');
-        } else {
-            document.body.removeAttribute('arco-theme');
-        }
-        setConf(theme, mdSize);
-    }
 
     const renderMenu = (data) => {
         return data.map((v) => {
@@ -186,7 +196,7 @@ function App() {
                 <Button.Group>
                     <Tooltip position='bottom' trigger='hover' content='更新md文档到阅读器'>
                         <Button type='primary' icon={<IconCloudDownload/>} onClick={() => {
-                            getDoc();
+                            refresh();
                             Notification.success({
                                 title: '读取成功', content: '文档数据已载入。',
                             })
@@ -196,24 +206,45 @@ function App() {
                         <Button
                             type='primary'
                             icon={style === 'light' ? <IconSun/> : <IconMoon/>}
-                            onClick={() => conf(style === 'light' ? 'dark' : 'light', mdSize)}
+                            onClick={() => setStyle(() => {
+                                const v = style === 'light' ? 'dark' : 'light'
+                                if (v === 'dark') {
+                                    document.body.setAttribute('arco-theme', 'dark');
+                                } else {
+                                    document.body.removeAttribute('arco-theme');
+                                }
+                                setConf(v, mdSize, cate);
+                                return v;
+                            })}
                         >{style === 'light' ? '明亮' : '暗黑'}</Button>
                     </Tooltip>
                     <Button
                         type='secondary'
                         icon={<IconZoomOut/>}
                         disabled={mdSize <= 1}
-                        onClick={() => conf(style, mdSize - 1)}></Button>
+                        onClick={() => setMDSize(() => {
+                            const v = mdSize - 1
+                            setConf(style, v, cate);
+                            return v;
+                        })}></Button>
                     <Button
                         type='secondary'
                         icon={<IconZoomIn/>}
                         disabled={mdSize >= 5}
-                        onClick={() => conf(style, mdSize + 1)}></Button>
+                        onClick={() => setMDSize(() => {
+                            const v = mdSize + 1
+                            setConf(style, v, cate);
+                            return v;
+                        })}></Button>
                 </Button.Group>
             </Space>
             <h2 className="title">{title(cate)}</h2>
             <Divider/>
-            <div className={["content", "s" + mdSize].join(" ")} dangerouslySetInnerHTML={{__html: doc}}/>
+            <div className="stage">
+                <div className={["mdTxt", "s" + mdSize].join(" ")} dangerouslySetInnerHTML={{__html: doc.content}}/>
+                {doc.detail !== '' &&
+                    <div className={["mdTxt", "s" + mdSize].join(" ")} dangerouslySetInnerHTML={{__html: doc.detail}}/>}
+            </div>
         </div>
     </div>
 }

@@ -1,8 +1,9 @@
 package main
 
 import (
+	"crypto/md5"
 	"encoding/base64"
-	nano "github.com/matoous/go-nanoid/v2"
+	"encoding/hex"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -48,6 +49,12 @@ func img2base64(mdstr string) string {
 	return mdstr
 }
 
+func md5str(str string) string {
+	h := md5.New()
+	h.Write([]byte(str))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
 // 读取md文件
 func readMD(src string) []md {
 	var data []md
@@ -68,7 +75,7 @@ func readMD(src string) []md {
 	for _, info := range files {
 		name := info.Name()
 		path := src + "/" + name
-		key, _ := nano.New(9)
+		key := md5str(path)
 		if info.IsDir() {
 			children := readMD(path)
 			data = append(data, md{

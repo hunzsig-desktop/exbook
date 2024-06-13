@@ -93,103 +93,113 @@
       z-index: 1;
     }
 
-    .content {
+    .stage {
       flex: 1;
+      display: flex;
+      flex-direction: row;
       overflow-x: hidden;
       overflow-y: scroll;
-      padding: 0 7vh 2vh 5vh;
 
-      table {
-        border-collapse: collapse;
-        border: 1px solid #bbbbbb;
-        padding: 15px;
+      .mdTxt {
+        flex: 1;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        //margin-bottom: 2vh;
+        padding: 0 7vh 2vh 5vh;
+        border-right: 1px solid #bbbbbb;
 
-        th {
+        table {
+          border-collapse: collapse;
           border: 1px solid #bbbbbb;
-          padding: 10px 20px;
-          background: #555555;
-        }
+          padding: 15px;
 
-        tr {
-          border: 1px solid #bbbbbb;
-          padding: 0 10px;
-
-          td {
-            padding: 0 15px;
+          th {
             border: 1px solid #bbbbbb;
+            padding: 10px 20px;
+            background: #555555;
           }
+
+          tr {
+            border: 1px solid #bbbbbb;
+            padding: 0 10px;
+
+            td {
+              padding: 0 15px;
+              border: 1px solid #bbbbbb;
+            }
+          }
+
+        }
+
+        a {
+          font-weight: 700;
+          color: #ffdc3c;
+        }
+
+        h1, h2 {
+          color: var(--arcoblue-3);
+        }
+
+        li {
+          font-style: italic;
+        }
+
+        img {
+          width: auto;
+          max-width: 100%;
+          margin: 20px 0;
+        }
+
+        blockquote {
+          padding: 0 0.4vh;
+          margin-left: 0;
+        }
+
+        pre {
+          border-radius: 4px;
+          background: #fdfdfd;
+          color: #272727;
+        }
+
+        code {
+          border-radius: 4px;
+          display: block;
+          overflow-x: auto;
+          padding: 1em;
+          word-break: break-all;
+          white-space: pre-wrap;
+        }
+
+        .colour {
+          height: 30px;
+          line-height: 30px;
+          padding-left: 20px;
+          color: whitesmoke;
+          font-weight: 600;
+          text-shadow: -1px 0 #555555, 0 1px #555555, 1px 0 #555555,0 -1px #555555;
         }
 
       }
 
-      a {
-        font-weight: 700;
-        color: #ffdc3c;
+      .mdTxt.s1 {
+        font-size: 80%;
       }
 
-      h1, h2 {
-        color: var(--arcoblue-3);
+      .mdTxt.s2 {
+        font-size: 90%;
       }
 
-      li {
-        font-style: italic;
+      .mdTxt.s3 {
+        font-size: 100%;
       }
 
-      img {
-        width: auto;
-        max-width: 100%;
-        margin: 20px 0;
+      .mdTxt.s4 {
+        font-size: 115%;
       }
 
-      blockquote {
-        padding: 0 0.4vh;
-        margin-left: 0;
+      .mdTxt.s5 {
+        font-size: 135%;
       }
-
-      pre {
-        border-radius: 4px;
-        background: #fdfdfd;
-        color: #272727;
-      }
-
-      code {
-        border-radius: 4px;
-        display: block;
-        overflow-x: auto;
-        padding: 1em;
-        word-break: break-all;
-        white-space: pre-wrap;
-      }
-
-      .colour {
-        height: 30px;
-        line-height: 30px;
-        padding-left: 20px;
-        color: whitesmoke;
-        font-weight: 600;
-        text-shadow: -1px 0 #555555, 0 1px #555555, 1px 0 #555555,0 -1px #555555;
-      }
-
-    }
-
-    .content.s1 {
-      font-size: 80%;
-    }
-
-    .content.s2 {
-      font-size: 90%;
-    }
-
-    .content.s3 {
-      font-size: 100%;
-    }
-
-    .content.s4 {
-      font-size: 115%;
-    }
-
-    .content.s5 {
-      font-size: 135%;
     }
   }
 }
@@ -205,20 +215,24 @@
   }
 
   .md {
-    pre {
-      background: #333;
-      color: #ffffff
-    }
-  }
+    .stage {
+      .mdTxt {
+        border-right: 1px solid #dddddd;
 
-  .content {
-    a {
-      color: #165dff;
-    }
+        pre {
+          background: #333;
+          color: #ffffff
+        }
 
-    table {
-      th {
-        background: #dddddd;
+        a {
+          color: #165dff;
+        }
+
+        table {
+          th {
+            background: #dddddd;
+          }
+        }
       }
     }
   }
