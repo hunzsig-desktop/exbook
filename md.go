@@ -25,8 +25,27 @@ type md struct {
 	Key      string `json:"key"`
 	Title    string `json:"title"`
 	Content  string `json:"content"`
-	Example  string `json:"example"`
+	Detail   string `json:"detail"`
 	Children []md   `json:"children"`
+}
+
+func img2base64(mdstr string) string {
+	if mdstr == "" {
+		return ""
+	}
+	reg, _ := regexp.Compile(`\(/docs/images/(\w+)\.(\w+)\)`)
+	imgs := reg.FindAllString(mdstr, -1)
+	if len(imgs) > 0 {
+		pwd, _ := os.Getwd()
+		for _, img := range imgs {
+			ip := img[1 : len(img)-1]
+			suffix := ip[len(ip)-3:]
+			im, _ := os.ReadFile(pwd + ip)
+			imb64 := base64.StdEncoding.EncodeToString(im)
+			mdstr = strings.ReplaceAll(mdstr, img, "(data:image/"+suffix+";base64,"+imb64+")")
+		}
+	}
+	return mdstr
 }
 
 // 读取md文件
@@ -56,31 +75,28 @@ func readMD(src string) []md {
 				Key:      key,
 				Title:    name,
 				Content:  ``,
+				Detail:   ``,
 				Children: children,
 			})
 		} else {
+			if strings.Index(name, `.detail.md`) != -1 {
+				// detail文件跳过，交给主文件流程处理
+				continue
+			}
 			if strings.Index(name, `.md`) != -1 {
-				b, fErr := os.ReadFile(path)
-				if fErr == nil {
+				b, fErr1 := os.ReadFile(path)
+				// 交给主文件流程处理detail文件
+				detail := src + "/" + strings.Replace(name, ".md", ".detail.md", 1)
+				d, _ := os.ReadFile(detail)
+				dtstr := string(d)
+				if fErr1 == nil {
 					title := name[0 : len(name)-3]
 					mdstr := string(b)
-					// 将图片二进制数据转换为 Base64 编码
-					reg, _ := regexp.Compile(`\(/docs/images/(\w+)\.(\w+)\)`)
-					imgs := reg.FindAllString(mdstr, -1)
-					if len(imgs) > 0 {
-						pwd, _ := os.Getwd()
-						for _, img := range imgs {
-							ip := img[1 : len(img)-1]
-							suffix := ip[len(ip)-3:]
-							im, _ := os.ReadFile(pwd + ip)
-							imb64 := base64.StdEncoding.EncodeToString(im)
-							mdstr = strings.ReplaceAll(mdstr, img, "(data:image/"+suffix+";base64,"+imb64+")")
-						}
-					}
 					data = append(data, md{
 						Key:      key,
 						Title:    title,
-						Content:  mdstr,
+						Content:  img2base64(mdstr),
+						Detail:   img2base64(dtstr),
 						Children: nil,
 					})
 				}
