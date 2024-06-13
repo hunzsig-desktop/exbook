@@ -38,20 +38,20 @@ function App() {
         }
     })
     //
-    let mds = {};
-    let details = {};
     const title = (k) => {
         const str = tckv.title[k] || ``
         const tit = str.split(`.`)
         tit.shift()
         return tit.join(`.`)
     }
+    let mds = {};
     const md = (k) => {
         if (!mds[k]) {
             mds[k] = mi.render(tckv.content[k] || ``)
         }
         return mds[k]
     }
+    let details = {};
     const detail = (k) => {
         if (!details[k]) {
             details[k] = mi.render(tckv.detail[k] || ``)
@@ -61,13 +61,15 @@ function App() {
     const match = (html) => {
         if (word.length > 0) {
             let result = html.match(/>(.*?)</gmis);
-            result.forEach((w) => {
-                if (w.toLowerCase().indexOf(word.toLowerCase()) !== -1) {
-                    const regex = new RegExp(word, "gi");
-                    const w2 = w.replaceAll(regex, match => `<span class="wf">${match}</span>`);
-                    html = html.replace(w, w2);
-                }
-            })
+            if (result != null) {
+                result.forEach((w) => {
+                    if (w.toLowerCase().indexOf(word.toLowerCase()) !== -1) {
+                        const regex = new RegExp(word, "gi");
+                        const w2 = w.replaceAll(regex, match => `<span class="wf">${match}</span>`);
+                        html = html.replace(w, w2);
+                    }
+                })
+            }
         }
         return html
     }
