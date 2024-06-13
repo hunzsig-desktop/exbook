@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/fs"
 	"os"
 )
@@ -42,7 +41,6 @@ func (a *App) GetConf() ConfJson {
 			Cate:   ``,
 		}
 	}
-	fmt.Println(conf)
 	return conf
 }
 

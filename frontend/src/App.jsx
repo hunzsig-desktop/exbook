@@ -111,7 +111,7 @@ function App() {
                 if (v.mdSize !== mdSize) {
                     setMDSize(mdSize)
                 }
-                if (v.cate !== cate && tckv.title[v.cate] !== undefined) {
+                if (v.cate !== '' && tckv.title[v.cate] !== undefined) {
                     open(v.cate)
                 } else {
                     if (summary.length > 0) {
