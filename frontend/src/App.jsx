@@ -178,8 +178,12 @@ function App() {
                         setWord(word);
                         outWord = [];
                         if (word.length > 0) {
+                            const wl = word.toLowerCase()
                             for (const k in tckv.content) {
-                                if (tckv.content[k].toLowerCase().indexOf(word.toLowerCase()) === -1) {
+                                let c = tckv.content[k].toLowerCase()
+                                const regex = /\(data:image\/png;base64.*?\)/g
+                                c = c.replace(regex, '')
+                                if (c.indexOf(wl) === -1) {
                                     outWord.push(k);
                                 }
                             }
