@@ -14,7 +14,7 @@ import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import './App.less';
 import './hlst.less';
-import {Document} from "../wailsjs/go/main/App";
+import {Document, GetConf, SetConf} from "../wailsjs/go/main/App";
 
 function App() {
     const [style, setStyle] = useState('light');
@@ -90,19 +90,32 @@ function App() {
             }
         })
     }
+    const getConf = () => {
+        GetConf().then((v) => {
+            if (v.theme !== style || v.mdSize !== mdSize) {
+                conf(v.theme, v.mdSize)
+            }
+        })
+    }
+    const setConf = (theme, fontSize) => {
+        SetConf(theme, fontSize).then(() => {
+        })
+    }
 
     useEffect(() => {
+        getConf();
         getDoc();
     }, []);
 
-    const toggleLight = () => {
-        const s = style === 'light' ? 'dark' : 'light'
-        setStyle(s)
-        if (s === 'dark') {
+    const conf = (theme, mdSize) => {
+        setStyle(theme)
+        setMDSize(mdSize)
+        if (theme === 'dark') {
             document.body.setAttribute('arco-theme', 'dark');
         } else {
             document.body.removeAttribute('arco-theme');
         }
+        setConf(theme, mdSize);
     }
 
     const renderMenu = (data) => {
@@ -183,19 +196,19 @@ function App() {
                         <Button
                             type='primary'
                             icon={style === 'light' ? <IconSun/> : <IconMoon/>}
-                            onClick={toggleLight}
+                            onClick={() => conf(style === 'light' ? 'dark' : 'light', mdSize)}
                         >{style === 'light' ? '明亮' : '暗黑'}</Button>
                     </Tooltip>
                     <Button
                         type='secondary'
                         icon={<IconZoomOut/>}
                         disabled={mdSize <= 1}
-                        onClick={() => setMDSize(mdSize - 1)}></Button>
+                        onClick={() => conf(style, mdSize - 1)}></Button>
                     <Button
                         type='secondary'
                         icon={<IconZoomIn/>}
                         disabled={mdSize >= 5}
-                        onClick={() => setMDSize(mdSize + 1)}></Button>
+                        onClick={() => conf(style, mdSize + 1)}></Button>
                 </Button.Group>
             </Space>
             <h2 className="title">{title(cate)}</h2>
