@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Button, Divider, Input, Menu, Notification, Space, Tooltip} from '@arco-design/web-react';
+import {Button, Divider, Image, Input, Menu, Notification, Space, Tooltip} from '@arco-design/web-react';
 import {
     IconCloudDownload,
     IconMoon,
@@ -16,6 +16,10 @@ import './App.less';
 import './hlst.less';
 import {Document, GetConf, SetConf} from "../wailsjs/go/main/App";
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function App() {
     const [style, setStyle] = useState('light');
     const [cate, setCate] = useState('');
@@ -25,6 +29,7 @@ function App() {
     let [outWord, setOutWord] = useState([]);
     let [tckv, setTCKV] = useState({title: {}, content: {}});
     const [mdSize, setMDSize] = useState(3);
+    const [img, setImg] = useState({src: '', alt: ''});
     // 高亮
     const mi = new MarkdownIt({
         html: true, linkify: true, typographer: true, highlight: function (str, lang) {
@@ -45,18 +50,14 @@ function App() {
         return tit.join(`.`)
     }
     let mds = {};
-    const md = (k) => {
-        if (!mds[k]) {
-            mds[k] = mi.render(tckv.content[k] || ``)
+    const md = (name, key) => {
+        if (!mds[name]) {
+            mds[name] = {}
         }
-        return mds[k]
-    }
-    let details = {};
-    const detail = (k) => {
-        if (!details[k]) {
-            details[k] = mi.render(tckv.detail[k] || ``)
+        if (!mds[name][key]) {
+            mds[name][key] = mi.render(tckv[name][key] || ``)
         }
-        return details[k]
+        return mds[name][key]
     }
     const match = (html) => {
         if (word.length > 0) {
@@ -75,10 +76,23 @@ function App() {
     }
     const open = (key) => {
         setCate(key)
-        let c = md(key) || ``
-        let d = detail(key) || ``
+        let c = md("content", key) || ``
+        let d = md("detail", key) || ``
         setDoc({content: match(c), detail: match(d)});
         setConf(style, mdSize, key);
+        sleep(0).then(() => {
+            const images = document.getElementsByTagName('img');
+            for (const img of images) {
+                if (img.id !== 'bigImg') {
+                    img.onclick = function (evt) {
+                        setImg({src: evt.target.src, alt: evt.target.alt});
+                        sleep(0).then(() => {
+                            document.getElementById('bigImg').click();
+                        });
+                    };
+                }
+            }
+        });
     }
     const getData = (data, kv) => {
         data.map((v) => {
@@ -159,6 +173,7 @@ function App() {
         })
     }
     return <div id="app" className={style}>
+        <Image id="bigImg" src={img.src} alt={img.alt}/>
         <div className="sponsor" onClick={() => window.open("https://afdian.net/a/hunzsig")}>
             <div>支持开发者</div>
             <IconThumbUp/>
