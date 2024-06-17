@@ -86,14 +86,14 @@ func readMD(src string) []md {
 				Children: children,
 			})
 		} else {
-			if strings.Index(name, `.detail.md`) != -1 {
+			if strings.Index(name, `_detail.md`) != -1 {
 				// detail文件跳过，交给主文件流程处理
 				continue
 			}
 			if strings.Index(name, `.md`) != -1 {
 				b, fErr1 := os.ReadFile(path)
 				// 交给主文件流程处理detail文件
-				detail := src + "/" + strings.Replace(name, ".md", ".detail.md", 1)
+				detail := src + "/" + strings.Replace(name, ".md", "_detail.md", 1)
 				d, _ := os.ReadFile(detail)
 				dtstr := string(d)
 				if fErr1 == nil {
