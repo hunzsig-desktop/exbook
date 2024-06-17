@@ -44,7 +44,6 @@
     max-width: 25%;
     min-width: 130px;
     text-align: left;
-    box-shadow: 1px 0 2px #555555;
 
     > .search {
       padding: 1vh 0.6vw;
@@ -54,8 +53,8 @@
       overflow-x: hidden;
       overflow-y: scroll;
 
-      .arco-menu-item.focus {
-        font-weight: 600;
+      .arco-menu-selected {
+        font-weight: bold;
       }
     }
   }
@@ -148,11 +147,19 @@
           width: auto;
           max-width: 100%;
           margin: 20px 0;
+          border-radius: 4px;
         }
 
         blockquote {
-          padding: 0 0.4vh;
-          margin-left: 0;
+          margin: 10px 0;
+          padding: 2px 0 2px 12px;
+          border-left: 3px #ffdc3c solid;
+          background: #272727;
+
+          p {
+            margin: 10px 0;
+            padding: 0;
+          }
         }
 
         pre {
@@ -222,6 +229,11 @@
         pre {
           background: #333;
           color: #ffffff
+        }
+
+        blockquote {
+          border-left: 3px #7fa5fa solid;
+          background: #f4f7f9;
         }
 
         a {

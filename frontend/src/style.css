@@ -1,14 +1,13 @@
 @font-face {
-    font-family: "PingFangSC";
+    font-family: "PingFang";
     font-style: normal;
-    src: url("assets/fonts/PingFangSC.ttf");
+    src: url("assets/fonts/PingFang-Medium.ttf");
 }
 
 @font-face {
     font-family: 'Fira';
-    src: url('assets/fonts/FiraCode-Light.woff2') format('woff2');
-    font-weight: 300;
     font-style: normal;
+    src: url('assets/fonts/FiraCode-Regular.ttf');
 }
 
 html {
@@ -17,7 +16,7 @@ html {
 
 body {
     margin: 0;
-    font-family: "PingFangSC", sans-serif !important;
+    font-family: "PingFang", sans-serif !important;
     font-size: 15px;
     background-color: var(--color-bg-1);
     color: var(--color-text-1);
