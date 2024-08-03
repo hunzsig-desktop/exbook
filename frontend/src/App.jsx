@@ -14,7 +14,8 @@ import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import './App.less';
 import './hlst.less';
-import {Document, GetConf, OpenBrowser, SetConf} from "../wailsjs/go/main/App";
+import {Document, GetConf, SetConf} from "../wailsjs/go/main/App";
+import {BrowserOpenURL} from "../wailsjs/runtime";
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -22,7 +23,7 @@ function sleep(ms) {
 
 function App() {
     document.openbrowser = (url) => {
-        OpenBrowser(url)
+        BrowserOpenURL(url)
     }
     const [style, setStyle] = useState('light');
     const [cate, setCate] = useState('');
@@ -186,7 +187,7 @@ function App() {
     }
     return <div id="app" className={style}>
         <Image id="bigImg" src={img.src} alt={img.alt}/>
-        <div className="sponsor" onClick={() => OpenBrowser("https://www.hunzsig.com")}>
+        <div className="sponsor" onClick={() => BrowserOpenURL("https://www.hunzsig.com")}>
             <div>支持开发者</div>
             <IconThumbUp/>
             <IconThumbUp/>

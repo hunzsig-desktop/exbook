@@ -54,7 +54,3 @@ func (a *App) SetConf(theme string, mdSize int, cate string) {
 	file := homeFile()
 	_ = os.WriteFile(file, j, fs.ModePerm)
 }
-
-func (a *App) OpenBrowser(url string) {
-	openBrowser(url)
-}
