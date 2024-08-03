@@ -174,7 +174,7 @@ function App() {
     }
     return <div id="app" className={style}>
         <Image id="bigImg" src={img.src} alt={img.alt}/>
-        <div className="sponsor" onClick={() => window.open("https://afdian.net/a/hunzsig")}>
+        <div className="sponsor" onClick={() => window.open("https://www.hunzsig.com")}>
             <div>支持开发者</div>
             <IconThumbUp/>
             <IconThumbUp/>
