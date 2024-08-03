@@ -14,13 +14,16 @@ import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import './App.less';
 import './hlst.less';
-import {Document, GetConf, SetConf} from "../wailsjs/go/main/App";
+import {Document, GetConf, OpenBrowser, SetConf} from "../wailsjs/go/main/App";
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function App() {
+    document.openbrowser = (url) => {
+        OpenBrowser(url)
+    }
     const [style, setStyle] = useState('light');
     const [cate, setCate] = useState('');
     const [doc, setDoc] = useState({content: '', detail: ''});
@@ -32,7 +35,10 @@ function App() {
     const [img, setImg] = useState({src: '', alt: ''});
     // 高亮
     const mi = new MarkdownIt({
-        html: true, linkify: true, typographer: true, highlight: function (str, lang) {
+        html: true,
+        linkify: true,
+        typographer: true,
+        highlight: function (str, lang) {
             if (lang && hljs.getLanguage(lang)) {
                 try {
                     return hljs.highlight(str, {language: lang}).value;
@@ -40,9 +46,15 @@ function App() {
                 }
             }
             return ''; // use external default escaping
-        }
+        },
     })
-    //
+    mi.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+        const href = tokens[idx].attrGet('href')
+        const content = tokens[1].content
+        tokens[1].content = ''
+        return `<a onclick="document.openbrowser('${href}')">${content}</a>`
+    }
+
     const title = (k) => {
         const str = tckv.title[k] || ``
         const tit = str.split(`.`)
@@ -174,7 +186,7 @@ function App() {
     }
     return <div id="app" className={style}>
         <Image id="bigImg" src={img.src} alt={img.alt}/>
-        <div className="sponsor" onClick={() => window.open("https://www.hunzsig.com")}>
+        <div className="sponsor" onClick={() => OpenBrowser("https://www.hunzsig.com")}>
             <div>支持开发者</div>
             <IconThumbUp/>
             <IconThumbUp/>
