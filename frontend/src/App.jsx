@@ -51,8 +51,12 @@ function App() {
     })
     mi.renderer.rules.link_open = function (tokens, idx, options, env, self) {
         const href = tokens[idx].attrGet('href')
-        const content = tokens[1].content
-        tokens[1].content = ''
+        const t1 = tokens[idx + 1]
+        let content = '点击'
+        if (undefined !== t1 && t1.type === "text") {
+            content = t1.content
+            t1.content = ''
+        }
         return `<a onclick="document.openbrowser('${href}')">${content}</a>`
     }
 
