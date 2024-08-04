@@ -140,7 +140,7 @@ function App() {
                     }
                 }
                 if (v.mdSize !== mdSize) {
-                    setMDSize(mdSize)
+                    setMDSize(v.mdSize)
                 }
                 if (v.cate !== '' && tckv.title[v.cate] !== undefined) {
                     open(v.cate)
@@ -152,8 +152,8 @@ function App() {
             })
         })
     }
-    const setConf = (theme, fontSize, cate) => {
-        SetConf(theme, fontSize, cate).then(() => {
+    const setConf = (theme, mdSize, cate) => {
+        SetConf(theme, mdSize, cate).then(() => {
         })
     }
 
