@@ -67,7 +67,6 @@ func readMD(src string) []md {
 	if err != nil {
 		panic(err)
 	}
-
 	files, err2 := os.ReadDir(src)
 	if err2 != nil {
 		panic(err2)
