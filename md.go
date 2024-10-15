@@ -30,6 +30,25 @@ type md struct {
 	Children []md   `json:"children"`
 }
 
+func uriScheme(path string) string {
+	ext := filepath.Ext(path)
+	trans := map[string]string{
+		".txt":  "text/plain",
+		".html": "text/html",
+		".css":  "text/css",
+		".js":   "text/javascript",
+		".gif":  "image/gif",
+		".png":  "image/png",
+		".jpg":  "image/jpeg",
+		".jpeg": "image/jpeg",
+		".icon": "image/x-icon",
+	}
+	if trans[ext] != "" {
+		return trans[ext]
+	}
+	return "file/" + ext
+}
+
 func img2base64(mdstr string) string {
 	if mdstr == "" {
 		return ""
@@ -40,10 +59,10 @@ func img2base64(mdstr string) string {
 		pwd, _ := os.Getwd()
 		for _, img := range imgs {
 			ip := img[1 : len(img)-1]
-			suffix := ip[len(ip)-3:]
+			us := uriScheme(ip)
 			im, _ := os.ReadFile(pwd + ip)
 			imb64 := base64.StdEncoding.EncodeToString(im)
-			mdstr = strings.ReplaceAll(mdstr, img, "(data:image/"+suffix+";base64,"+imb64+")")
+			mdstr = strings.ReplaceAll(mdstr, img, "(data:"+us+";base64,"+imb64+")")
 		}
 	}
 	return mdstr
