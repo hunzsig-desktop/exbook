@@ -10,12 +10,6 @@ import (
 	"strings"
 )
 
-type ConfJson struct {
-	Theme  string `json:"theme"`
-	MdSize int    `json:"mdSize"`
-	Cate   string `json:"cate"`
-}
-
 func homeUnix() (string, error) {
 	// First prefer the HOME environmental variable
 	if home := os.Getenv("HOME"); home != "" {

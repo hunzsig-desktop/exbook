@@ -12,6 +12,12 @@ type App struct {
 	ctx context.Context
 }
 
+type ConfJson struct {
+	Theme  string `json:"theme"`
+	MdSize int    `json:"mdSize"`
+	Cate   string `json:"cate"`
+}
+
 // NewApp creates a new App application struct
 func NewApp() *App {
 	return &App{}
