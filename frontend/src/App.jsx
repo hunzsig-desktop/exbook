@@ -251,7 +251,7 @@ function App() {
         <div className="md">
             <Space size='large' className="tools">
                 <Input
-                    style={{marginTop: '6px', marginRight: '4px'}}
+                    className="folder"
                     size="small"
                     addBefore='文档根'
                     searchButton={<IconCloudDownload/> + '读取文档'}
