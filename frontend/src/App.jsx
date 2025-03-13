@@ -25,6 +25,7 @@ function App() {
     document.openbrowser = (url) => {
         BrowserOpenURL(url)
     }
+    const [folder, setFolder] = useState('/docs');
     const [style, setStyle] = useState('light');
     const [cate, setCate] = useState('');
     const [doc, setDoc] = useState({content: '', detail: ''});
@@ -96,7 +97,7 @@ function App() {
         let c = md("content", key) || ``
         let d = md("detail", key) || ``
         setDoc({content: match(c), detail: match(d)});
-        setConf(style, mdSize, key);
+        setConf(folder, style, mdSize, key);
         sleep(0).then(() => {
             const images = document.getElementsByTagName('img');
             for (const img of images) {
@@ -125,12 +126,30 @@ function App() {
     }
     const refresh = () => {
         Document().then((v) => {
+            if (v === null) {
+                Notification.error({
+                    title: '读取错误', content: [
+                        '请检查文档数据格式。（文档需放置在/根/mds中）',
+                    ],
+                })
+                return
+            }
             mds = {};
             summary = v;
             setSummary(summary);
             tckv = getData(summary, {title: {}, content: {}, detail: {}})
             setTCKV(tckv)
             GetConf().then((v) => {
+                if (v.folder !== folder) {
+                    setFolder(v.folder)
+                    Notification.success({
+                        title: '读取成功', content: '文档根错误，已载入默认或上一次的根目录数据。',
+                    })
+                } else {
+                    Notification.success({
+                        title: '读取成功', content: '已载入文档数据。',
+                    })
+                }
                 if (v.theme !== style) {
                     setStyle(v.theme)
                     if (v.theme === 'dark') {
@@ -152,8 +171,8 @@ function App() {
             })
         })
     }
-    const setConf = (theme, mdSize, cate) => {
-        SetConf(theme, mdSize, cate).then(() => {
+    const setConf = (folder, theme, mdSize, cate) => {
+        SetConf(folder, theme, mdSize, cate).then(() => {
         })
     }
 
@@ -231,13 +250,22 @@ function App() {
         </div>
         <div className="md">
             <Space size='large' className="tools">
+                <Input
+                    style={{marginTop: '6px', marginRight: '4px'}}
+                    size="small"
+                    addBefore='文档根'
+                    searchButton={<IconCloudDownload/> + '读取文档'}
+                    value={folder}
+                    placeholder='默认/docs'
+                    onChange={(val) => {
+                        setFolder(val)
+                    }}
+                />
                 <Button.Group>
                     <Tooltip position='bottom' trigger='hover' content='更新md文档到阅读器'>
                         <Button type='primary' icon={<IconCloudDownload/>} onClick={() => {
+                            setConf(folder, style, mdSize, cate);
                             refresh();
-                            Notification.success({
-                                title: '读取成功', content: '文档数据已载入。',
-                            })
                         }}>读取文档</Button>
                     </Tooltip>
                     <Tooltip position='bottom' trigger='hover' content='主题色调'>
@@ -251,7 +279,7 @@ function App() {
                                 } else {
                                     document.body.removeAttribute('arco-theme');
                                 }
-                                setConf(v, mdSize, cate);
+                                setConf(folder, v, mdSize, cate);
                                 return v;
                             })}
                         >{style === 'light' ? '明亮' : '暗黑'}</Button>
@@ -262,7 +290,7 @@ function App() {
                         disabled={mdSize <= 1}
                         onClick={() => setMDSize(() => {
                             const v = mdSize - 1
-                            setConf(style, v, cate);
+                            setConf(folder, style, v, cate);
                             return v;
                         })}></Button>
                     <Button
@@ -271,7 +299,7 @@ function App() {
                         disabled={mdSize >= 5}
                         onClick={() => setMDSize(() => {
                             const v = mdSize + 1
-                            setConf(style, v, cate);
+                            setConf(folder, style, v, cate);
                             return v;
                         })}></Button>
                 </Button.Group>

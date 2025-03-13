@@ -30,6 +30,15 @@ type md struct {
 	Children []md   `json:"children"`
 }
 
+func isDir(path string) bool {
+	res := false
+	fileInfo, err := os.Stat(path)
+	if err == nil {
+		res = fileInfo.IsDir()
+	}
+	return res
+}
+
 func uriScheme(path string) string {
 	ext := filepath.Ext(path)
 	trans := map[string]string{
@@ -49,11 +58,14 @@ func uriScheme(path string) string {
 	return "file/" + ext
 }
 
-func img2base64(mdstr string) string {
+func img2base64(mdstr string, exp string) string {
 	if mdstr == "" {
 		return ""
 	}
-	reg, _ := regexp.Compile(`\(/docs/images/(\w+)\.(\w+)\)`)
+	if exp == "" {
+		exp = `\(/docs/images/(\w+)\.(\w+)\)`
+	}
+	reg, _ := regexp.Compile(exp)
 	imgs := reg.FindAllString(mdstr, -1)
 	if len(imgs) > 0 {
 		pwd, _ := os.Getwd()
@@ -75,10 +87,9 @@ func md5str(str string) string {
 }
 
 // 读取md文件
-func readMD(src string) []md {
+func readMD(src string, imgExp string) []md {
 	var data []md
-	srcFileInfo := GetFileInfo(src)
-	if srcFileInfo == nil || !srcFileInfo.IsDir() {
+	if !isDir(src) {
 		return data
 	}
 	var err error
@@ -95,7 +106,7 @@ func readMD(src string) []md {
 		path := src + "/" + name
 		key := md5str(path)
 		if info.IsDir() {
-			children := readMD(path)
+			children := readMD(path, imgExp)
 			data = append(data, md{
 				Key:      key,
 				Title:    name,
@@ -120,8 +131,8 @@ func readMD(src string) []md {
 					data = append(data, md{
 						Key:      key,
 						Title:    title,
-						Content:  img2base64(mdstr),
-						Detail:   img2base64(dtstr),
+						Content:  img2base64(mdstr, imgExp),
+						Detail:   img2base64(dtstr, imgExp),
 						Children: nil,
 					})
 				}
