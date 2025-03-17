@@ -35,6 +35,7 @@ function App() {
     let [tckv, setTCKV] = useState({title: {}, content: {}});
     const [mdSize, setMDSize] = useState(3);
     const [img, setImg] = useState({src: '', alt: ''});
+    const [refreshing, setRefreshing] = useState(false);
     // 高亮
     const mi = new MarkdownIt({
         html: true,
@@ -124,7 +125,7 @@ function App() {
         })
         return kv
     }
-    const refresh = () => {
+    const refresh = (isNotify) => {
         Document().then((v) => {
             if (v === null) {
                 Notification.error({
@@ -142,11 +143,11 @@ function App() {
             GetConf().then((v) => {
                 if (v.folder !== folder) {
                     setFolder(v.folder)
-                    Notification.success({
+                    isNotify && Notification.success({
                         title: '读取成功', content: '文档根错误，已载入默认或上一次的根目录数据。',
                     })
                 } else {
-                    Notification.success({
+                    isNotify && Notification.success({
                         title: '读取成功', content: '已载入文档数据。',
                     })
                 }
@@ -171,13 +172,16 @@ function App() {
             })
         })
     }
-    const setConf = (folder, theme, mdSize, cate) => {
+    const setConf = (folder, theme, mdSize, cate, call) => {
         SetConf(folder, theme, mdSize, cate).then(() => {
+            if (typeof call === "function") {
+                call()
+            }
         })
     }
 
     useEffect(() => {
-        refresh();
+        refresh(false);
     }, []);
 
     const renderMenu = (data) => {
@@ -263,10 +267,21 @@ function App() {
                 />
                 <Button.Group>
                     <Tooltip position='bottom' trigger='hover' content='更新md文档到阅读器'>
-                        <Button type='primary' icon={<IconCloudDownload/>} onClick={() => {
-                            setConf(folder, style, mdSize, cate);
-                            refresh();
-                        }}>读取文档</Button>
+                        <Button type='primary'
+                                icon={<IconCloudDownload/>}
+                                disabled={refreshing}
+                                loading={refreshing}
+                                onClick={
+                                    () => {
+                                        setRefreshing(true);
+                                        sleep(1000).then(() => {
+                                            setRefreshing(false);
+                                        })
+                                        setConf(folder, style, mdSize, cate, () => {
+                                            refresh(true);
+                                        });
+                                    }
+                                }>读取文档</Button>
                     </Tooltip>
                     <Tooltip position='bottom' trigger='hover' content='主题色调'>
                         <Button
