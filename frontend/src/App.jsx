@@ -30,9 +30,8 @@ function App() {
     const [cate, setCate] = useState('');
     const [doc, setDoc] = useState({content: '', detail: ''});
     let [summary, setSummary] = useState([]);
-    let [word, setWord] = useState('');
-    let [outWord, setOutWord] = useState([]);
-    let [tckv, setTCKV] = useState({title: {}, content: {}});
+    let [summaryMap, setSummaryMap] = useState({title: {}, content: {}, detail: {}, isShow: {}});
+    let [findWord, setFindWord] = useState('');
     const [mdSize, setMDSize] = useState(3);
     const [img, setImg] = useState({src: '', alt: ''});
     const [refreshing, setRefreshing] = useState(false);
@@ -62,44 +61,25 @@ function App() {
         return `<a onclick="document.openbrowser('${href}')">${content}</a>`
     }
 
-    const title = (k) => {
-        const str = tckv.title[k] || ``
-        const tit = str.split(`.`)
-        tit.shift()
-        return tit.join(`.`)
-    }
-    let mds = {};
-    const md = (name, key) => {
-        if (!mds[name]) {
-            mds[name] = {}
-        }
-        if (!mds[name][key]) {
-            mds[name][key] = mi.render(tckv[name][key] || ``)
-        }
-        return mds[name][key]
-    }
-    const match = (html) => {
-        if (word.length > 0) {
-            let result = html.match(/>(.*?)</gmis);
-            if (result != null) {
-                result.forEach((w) => {
-                    if (w.toLowerCase().indexOf(word.toLowerCase()) !== -1) {
-                        const regex = new RegExp(word, "gi");
-                        const w2 = w.replaceAll(regex, match => `<span class="wf">${match}</span>`);
-                        html = html.replace(w, w2);
-                    }
-                })
-            }
-        }
-        return html
-    }
     const open = (key) => {
         if (typeof key === 'string' && key !== '') {
             setCate(key)
-            let c = md("content", key) || ``
-            let d = md("detail", key) || ``
-            setDoc({content: match(c), detail: match(d)});
             setConf(folder, style, mdSize, key);
+            const _html = (str) => {
+                let html = mi.render(str)
+                if (findWord.length > 0) {
+                    let mat = html.match(/>(.*?)</gmis);
+                    if (mat != null) {
+                        mat.forEach((w) => {
+                            const regex = new RegExp(findWord, "gi");
+                            const w2 = w.replaceAll(regex, match => `<span class="wf">${match}</span>`);
+                            html = html.replace(w, w2);
+                        })
+                    }
+                }
+                return html
+            }
+            setDoc({content: _html(summaryMap.content[key] || ``), detail: _html(summaryMap.detail[key] || ``)});
             sleep(0).then(() => {
                 const images = document.getElementsByTagName('img');
                 for (const img of images) {
@@ -115,17 +95,55 @@ function App() {
             });
         }
     }
-    const getData = (data, kv) => {
-        data.map((v) => {
-            kv.title[v.key] = v.title
-            if (v.children === null) {
-                kv.content[v.key] = v.content
-                kv.detail[v.key] = v.detail
-            } else {
-                getData(v.children, kv)
-            }
-        })
-        return kv
+
+    const parseSummary = () => {
+        const dv = {title: {}, content: {}, detail: {}, isShow: {}}
+        const _parser = (data) => {
+            let isShowAll = findWord.length <= 0
+            data.map((v) => {
+                let isShow = findWord.length <= 0
+                let t = v.title || ``
+                t = t.split(`.`)
+                t.shift()
+                t = t.join(`.`)
+                if (!isShow && t.toLowerCase().indexOf(findWord) !== -1) {
+                    isShow = true
+                    const regex = new RegExp(findWord, "gi");
+                    const wt = t.replaceAll(regex, match => `<span class="wf">${match}</span>`);
+                    t = <span dangerouslySetInnerHTML={{__html: wt}}/>
+                }
+                dv.title[v.key] = t
+                if (v.children === null) {
+                    let c = v.content || ``
+                    let d = v.detail || ``
+                    if (!isShow) {
+                        let c2 = c.toLowerCase().replace(new RegExp(/\(data:image\/png;base64.*?\)/, "g"), '') // clear image
+                        if (findWord.length > 0 && c2.indexOf(findWord) !== -1) {
+                            isShow = true
+                        }
+                    }
+                    if (!isShow) {
+                        let d2 = d.toLowerCase().replace(new RegExp(/\(data:image\/png;base64.*?\)/, "g"), '') // clear image
+                        if (findWord.length > 0 && d2.indexOf(findWord) !== -1) {
+                            isShow = true
+                        }
+                    }
+                    dv.content[v.key] = c
+                    dv.detail[v.key] = d
+                    dv.isShow[v.key] = isShow
+                } else {
+                    isShow = _parser(v.children)
+                    dv.isShow[v.key] = isShow
+                }
+                if (isShowAll === false && isShow === true) {
+                    isShowAll = true
+                }
+            })
+            return isShowAll
+        }
+        _parser(summary)
+        summaryMap = dv
+        setSummaryMap(summaryMap)
     }
     const firstCate = (data) => {
         if (Array.isArray(data)) {
@@ -150,26 +168,25 @@ function App() {
         Document().then((v) => {
             if (v === null) {
                 Notification.error({
-                    title: '读取错误', content: [
-                        '请检查文档数据格式。（文档需放置在/根/mds中）',
-                    ],
+                    title: '读取错误',
+                    content: ['请检查文档数据格式。（文档需放置在/根/mds中）',],
                 })
                 return
             }
-            mds = {};
             summary = v;
             setSummary(summary);
-            tckv = getData(summary, {title: {}, content: {}, detail: {}})
-            setTCKV(tckv)
+            parseSummary()
             GetConf().then((v) => {
                 if (v.folder !== folder) {
                     setFolder(v.folder)
                     isNotify && Notification.success({
-                        title: '读取成功', content: '文档根错误，已载入默认或上一次的根目录数据。',
+                        title: '读取成功',
+                        content: '文档根错误，已载入默认或上一次的根目录数据。',
                     })
                 } else {
                     isNotify && Notification.success({
-                        title: '读取成功', content: '已载入文档数据。',
+                        title: '读取成功',
+                        content: '已载入文档数据。',
                     })
                 }
                 if (v.theme !== style) {
@@ -183,7 +200,7 @@ function App() {
                 if (v.mdSize !== mdSize) {
                     setMDSize(v.mdSize)
                 }
-                if (v.cate !== '' && tckv.title[v.cate] !== undefined) {
+                if (v.cate !== '' && summaryMap.title[v.cate] !== undefined) {
                     open(v.cate)
                 } else {
                     if (summary.length > 0) {
@@ -207,29 +224,20 @@ function App() {
 
     const renderMenu = (data) => {
         return data.map((v) => {
-            let tit = title(v.key)
+            const k = v.key
             if (v.children === null) {
-                let cn = []
-                let outName = true
-                if (word.length > 0) {
-                    outName = tit.toLowerCase().indexOf(word.toLowerCase()) === -1;
-                    if (!outName) {
-                        const regex = new RegExp(word, "gi");
-                        tit = tit.replaceAll(regex, match => `<span class="wf">${match}</span>`);
-                    }
-                }
-                if (outName && outWord.includes(v.key)) {
-                    cn.push(`wf2`);
-                }
                 return <Menu.Item
-                    key={v.key}
-                    className={cn.join(` `)}
+                    key={k}
+                    className={summaryMap.isShow[k] !== true ? 'wf2' : ''}
                     onClick={() => {
-                        open(v.key)
+                        open(k)
                     }}
-                ><span dangerouslySetInnerHTML={{__html: tit}}></span></Menu.Item>
+                >{summaryMap.title[k]}</Menu.Item>
             } else {
-                return <Menu.SubMenu key={v.key} title={tit}>{renderMenu(v.children)}</Menu.SubMenu>
+                return <Menu.SubMenu
+                    key={k}
+                    title={summaryMap.title[k]}
+                    className={summaryMap.isShow[k] !== true ? 'wf2' : ''}>{renderMenu(v.children)}</Menu.SubMenu>
             }
         })
     }
@@ -250,21 +258,9 @@ function App() {
                     prefix={<IconSearch/>}
                     placeholder="在此搜索"
                     onChange={(val) => {
-                        word = val;
-                        setWord(word);
-                        outWord = [];
-                        if (word.length > 0) {
-                            const wl = word.toLowerCase()
-                            for (const k in tckv.content) {
-                                let c = tckv.content[k].toLowerCase()
-                                const regex = /\(data:image\/png;base64.*?\)/g
-                                c = c.replace(regex, '')
-                                if (c.indexOf(wl) === -1) {
-                                    outWord.push(k);
-                                }
-                            }
-                        }
-                        setOutWord(outWord);
+                        findWord = val.toLowerCase();
+                        setFindWord(findWord);
+                        parseSummary();
                         open(cate);
                     }}
                 />
@@ -292,17 +288,15 @@ function App() {
                                 icon={<IconCloudDownload/>}
                                 disabled={refreshing}
                                 loading={refreshing}
-                                onClick={
-                                    () => {
-                                        setRefreshing(true);
-                                        sleep(1000).then(() => {
-                                            setRefreshing(false);
-                                        })
-                                        setConf(folder, style, mdSize, cate, () => {
-                                            refresh(true);
-                                        });
-                                    }
-                                }>读取文档</Button>
+                                onClick={() => {
+                                    setRefreshing(true);
+                                    sleep(1000).then(() => {
+                                        setRefreshing(false);
+                                    })
+                                    setConf(folder, style, mdSize, cate, () => {
+                                        refresh(true);
+                                    });
+                                }}>读取文档</Button>
                     </Tooltip>
                     <Tooltip position='bottom' trigger='hover' content='主题色调'>
                         <Button
@@ -340,7 +334,7 @@ function App() {
                         })}></Button>
                 </Button.Group>
             </Space>
-            <h2 className="title">{title(cate)}</h2>
+            <h2 className="title">{summaryMap.title[cate] || ``}</h2>
             <Divider/>
             <div className="stage">
                 <div className={["mdTxt", "s" + mdSize].join(" ")} dangerouslySetInnerHTML={{__html: doc.content}}/>
