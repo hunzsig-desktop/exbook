@@ -4,23 +4,12 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 )
-
-// GetFileInfo 判断文件或目录是否存在
-func GetFileInfo(src string) os.FileInfo {
-	if fileInfo, e := os.Stat(src); e != nil {
-		if os.IsNotExist(e) {
-			return nil
-		}
-		return nil
-	} else {
-		return fileInfo
-	}
-}
 
 type md struct {
 	Key      string `json:"key"`
@@ -58,21 +47,18 @@ func uriScheme(path string) string {
 	return "file/" + ext
 }
 
-func img2base64(mdstr string, exp string) string {
+func img2base64(mdstr string) string {
 	if mdstr == "" {
 		return ""
 	}
-	if exp == "" {
-		exp = `\(/docs/images/(\w+)\.(\w+)\)`
-	}
-	reg, _ := regexp.Compile(exp)
+	reg, _ := regexp.Compile(`\(/images/(\w+)\.(\w+)\)`)
 	imgs := reg.FindAllString(mdstr, -1)
 	if len(imgs) > 0 {
-		pwd, _ := os.Getwd()
+		root := mdRoot()
 		for _, img := range imgs {
 			ip := img[1 : len(img)-1]
 			us := uriScheme(ip)
-			im, _ := os.ReadFile(pwd + ip)
+			im, _ := os.ReadFile(root + ip)
 			imb64 := base64.StdEncoding.EncodeToString(im)
 			mdstr = strings.ReplaceAll(mdstr, img, "(data:"+us+";base64,"+imb64+")")
 		}
@@ -86,8 +72,39 @@ func md5str(str string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+func mdConf() ConfJson {
+	file := homeFile()
+	j, _ := os.ReadFile(file)
+	var conf ConfJson
+	_ = json.Unmarshal(j, &conf)
+	if len(j) == 0 {
+		conf = ConfJson{
+			Folder: `/docs`,
+			Theme:  `light`,
+			MdSize: 3,
+			Cate:   ``,
+		}
+	} else {
+		pwd, _ := os.Getwd()
+		if !isDir(pwd + "/" + conf.Folder) {
+			conf.Folder = "/docs"
+		}
+	}
+	return conf
+}
+
+func mdRoot() string {
+	pwd, _ := os.Getwd()
+	conf := mdConf()
+	folder := conf.Folder
+	if folder[0:1] != "/" {
+		folder = "/" + folder
+	}
+	return pwd + folder
+}
+
 // 读取md文件
-func readMD(src string, imgExp string) []md {
+func mdRead(src string) []md {
 	var data []md
 	if !isDir(src) {
 		return data
@@ -106,7 +123,7 @@ func readMD(src string, imgExp string) []md {
 		path := src + "/" + name
 		key := md5str(path)
 		if info.IsDir() {
-			children := readMD(path, imgExp)
+			children := mdRead(path)
 			data = append(data, md{
 				Key:      key,
 				Title:    name,
@@ -131,8 +148,8 @@ func readMD(src string, imgExp string) []md {
 					data = append(data, md{
 						Key:      key,
 						Title:    title,
-						Content:  img2base64(mdstr, imgExp),
-						Detail:   img2base64(dtstr, imgExp),
+						Content:  img2base64(mdstr),
+						Detail:   img2base64(dtstr),
 						Children: nil,
 					})
 				}

@@ -33,36 +33,11 @@ func (a *App) startup(ctx context.Context) {
 
 // Document Get Documents
 func (a *App) Document() []md {
-	pwd, _ := os.Getwd()
-	conf := a.GetConf()
-	folder := conf.Folder
-	if folder[0:1] != "/" {
-		folder = "/" + folder
-	}
-	src := pwd + folder + `/mds`
-	imgExp := `\(` + conf.Folder + `/images/(\w+)\.(\w+)\)`
-	return readMD(src, imgExp)
+	return mdRead(mdRoot() + `/mds`)
 }
 
 func (a *App) GetConf() ConfJson {
-	file := homeFile()
-	j, _ := os.ReadFile(file)
-	var conf ConfJson
-	_ = json.Unmarshal(j, &conf)
-	if len(j) == 0 {
-		conf = ConfJson{
-			Folder: `/docs`,
-			Theme:  `light`,
-			MdSize: 3,
-			Cate:   ``,
-		}
-	} else {
-		pwd, _ := os.Getwd()
-		if !isDir(pwd + "/" + conf.Folder) {
-			conf.Folder = "/docs"
-		}
-	}
-	return conf
+	return mdConf()
 }
 
 func (a *App) SetConf(folder string, theme string, mdSize int, cate string) {
