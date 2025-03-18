@@ -94,24 +94,26 @@ function App() {
         return html
     }
     const open = (key) => {
-        setCate(key)
-        let c = md("content", key) || ``
-        let d = md("detail", key) || ``
-        setDoc({content: match(c), detail: match(d)});
-        setConf(folder, style, mdSize, key);
-        sleep(0).then(() => {
-            const images = document.getElementsByTagName('img');
-            for (const img of images) {
-                if (img.id !== 'bigImg') {
-                    img.onclick = function (evt) {
-                        setImg({src: evt.target.src, alt: evt.target.alt});
-                        sleep(0).then(() => {
-                            document.getElementById('bigImg').click();
-                        });
-                    };
+        if (typeof key === 'string' && key !== '') {
+            setCate(key)
+            let c = md("content", key) || ``
+            let d = md("detail", key) || ``
+            setDoc({content: match(c), detail: match(d)});
+            setConf(folder, style, mdSize, key);
+            sleep(0).then(() => {
+                const images = document.getElementsByTagName('img');
+                for (const img of images) {
+                    if (img.id !== 'bigImg') {
+                        img.onclick = function (evt) {
+                            setImg({src: evt.target.src, alt: evt.target.alt});
+                            sleep(0).then(() => {
+                                document.getElementById('bigImg').click();
+                            });
+                        };
+                    }
                 }
-            }
-        });
+            });
+        }
     }
     const getData = (data, kv) => {
         data.map((v) => {
@@ -124,6 +126,25 @@ function App() {
             }
         })
         return kv
+    }
+    const firstCate = (data) => {
+        if (Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                const d = data[i]
+                if (d.children !== null) {
+                    const cate = firstCate(d.children)
+                    if (cate !== '') {
+                        return cate
+                    }
+                } else {
+                    return d.key
+                }
+            }
+        }
+        if (typeof data.key === "string") {
+            return data.key
+        }
+        return ``
     }
     const refresh = (isNotify) => {
         Document().then((v) => {
@@ -166,7 +187,7 @@ function App() {
                     open(v.cate)
                 } else {
                     if (summary.length > 0) {
-                        open(summary[0].key);
+                        open(firstCate(summary));
                     }
                 }
             })
