@@ -36,6 +36,11 @@ func (a *App) Document() []md {
 	return mdRead(mdRoot() + `/mds`)
 }
 
+// AssetsBase64 Get Base64
+func (a *App) AssetsBase64(src []string) map[string]string {
+	return mdAssets(src)
+}
+
 func (a *App) GetConf() ConfJson {
 	return mdConf()
 }

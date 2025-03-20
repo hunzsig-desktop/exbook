@@ -14,7 +14,7 @@ import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import './App.less';
 import './hlst.less';
-import {Document, GetConf, SetConf} from "../wailsjs/go/main/App";
+import {AssetsBase64, Document, GetConf, SetConf} from "../wailsjs/go/main/App";
 import {BrowserOpenURL} from "../wailsjs/runtime";
 
 function sleep(ms) {
@@ -65,6 +65,7 @@ function App() {
         if (typeof key === 'string' && key !== '') {
             setCate(key)
             setConf(folder, style, mdSize, key);
+            let srcList = [];
             const _html = (str) => {
                 let html = mi.render(str)
                 if (findWord.length > 0) {
@@ -77,22 +78,42 @@ function App() {
                         })
                     }
                 }
+                const matches = html.matchAll(/<img[^>]+src="([^"]+)"/g);
+                for (const match of matches) {
+                    srcList.push(match[1]);
+                }
                 return html
             }
-            setDoc({content: _html(summaryMap.content[key] || ``), detail: _html(summaryMap.detail[key] || ``)});
-            sleep(0).then(() => {
-                const images = document.getElementsByTagName('img');
-                for (const img of images) {
-                    if (img.id !== 'bigImg') {
-                        img.onclick = function (evt) {
-                            setImg({src: evt.target.src, alt: evt.target.alt});
-                            sleep(0).then(() => {
-                                document.getElementById('bigImg').click();
-                            });
-                        };
+            let c = _html(summaryMap.content[key] || ``)
+            let d = _html(summaryMap.detail[key] || ``)
+            srcList = [...new Set(srcList)];
+            const writeDoc = () => {
+                setDoc({content: c, detail: d});
+                sleep(0).then(() => {
+                    const images = document.getElementsByTagName('img');
+                    for (const img of images) {
+                        if (img.id !== 'bigImg') {
+                            img.onclick = function (evt) {
+                                setImg({src: evt.target.src, alt: evt.target.alt});
+                                sleep(0).then(() => {
+                                    document.getElementById('bigImg').click();
+                                });
+                            };
+                        }
                     }
-                }
-            });
+                });
+            }
+            if (srcList.length > 0) {
+                AssetsBase64(srcList).then((v) => {
+                    for (const k in v) {
+                        c = c.replaceAll(`src="${k}"`, `src="${v[k]}"`)
+                        d = d.replaceAll(`src="${k}"`, `src="${v[k]}"`)
+                    }
+                    writeDoc()
+                })
+            } else {
+                writeDoc()
+            }
         }
     }
 
@@ -117,13 +138,15 @@ function App() {
                     let c = v.content || ``
                     let d = v.detail || ``
                     if (!isShow) {
-                        let c2 = c.toLowerCase().replace(new RegExp(/\(data:image\/png;base64.*?\)/, "g"), '') // clear image
+                        let c2 = c.toLowerCase().replace(/!\[.+\]\(.+\)/g, '')
+                        c2 = c2.replace(/]\(.+\)/g, ']')
                         if (findWord.length > 0 && c2.indexOf(findWord) !== -1) {
                             isShow = true
                         }
                     }
                     if (!isShow) {
-                        let d2 = d.toLowerCase().replace(new RegExp(/\(data:image\/png;base64.*?\)/, "g"), '') // clear image
+                        let d2 = d.toLowerCase().replace(/!\[.+\]\(.+\)/g, '')
+                        d2 = d2.replace(/]\(.+\)/g, ']')
                         if (findWord.length > 0 && d2.indexOf(findWord) !== -1) {
                             isShow = true
                         }
@@ -175,7 +198,10 @@ function App() {
             }
             summary = v;
             setSummary(summary);
-            parseSummary()
+            parseSummary();
+            sleep(300).then(() => {
+                setRefreshing(false);
+            })
             GetConf().then((v) => {
                 if (v.folder !== folder) {
                     setFolder(v.folder)
@@ -290,7 +316,8 @@ function App() {
                                 loading={refreshing}
                                 onClick={() => {
                                     setRefreshing(true);
-                                    sleep(1000).then(() => {
+                                    // 正常刷新完再过300毫秒恢复，最长5000毫秒恢复刷新状态
+                                    sleep(5000).then(() => {
                                         setRefreshing(false);
                                     })
                                     setConf(folder, style, mdSize, cate, () => {

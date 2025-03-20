@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 )
 
@@ -47,23 +46,24 @@ func uriScheme(path string) string {
 	return "file/" + ext
 }
 
-func img2base64(mdstr string) string {
-	if mdstr == "" {
-		return ""
-	}
-	reg, _ := regexp.Compile(`\(/images/(\w+)\.(\w+)\)`)
-	imgs := reg.FindAllString(mdstr, -1)
-	if len(imgs) > 0 {
-		root := mdRoot()
-		for _, img := range imgs {
-			ip := img[1 : len(img)-1]
-			us := uriScheme(ip)
-			im, _ := os.ReadFile(root + ip)
-			imb64 := base64.StdEncoding.EncodeToString(im)
-			mdstr = strings.ReplaceAll(mdstr, img, "(data:"+us+";base64,"+imb64+")")
+// 根据src获取对应的assets的base64数据
+func mdAssets(src []string) map[string]string {
+	result := make(map[string]string)
+	root := mdRoot()
+	for _, s := range src {
+		path := root + `/assets/` + s
+		var err error
+		path, err = filepath.Abs(path)
+		if err != nil {
+			result[s] = ""
+			continue
 		}
+		us := uriScheme(path)
+		im, _ := os.ReadFile(path)
+		str64 := base64.StdEncoding.EncodeToString(im)
+		result[s] = "data:" + us + ";base64," + str64
 	}
-	return mdstr
+	return result
 }
 
 func md5str(str string) string {
@@ -148,8 +148,8 @@ func mdRead(src string) []md {
 					data = append(data, md{
 						Key:      key,
 						Title:    title,
-						Content:  img2base64(mdstr),
-						Detail:   img2base64(dtstr),
+						Content:  mdstr,
+						Detail:   dtstr,
 						Children: nil,
 					})
 				}
