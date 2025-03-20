@@ -78,7 +78,7 @@ function App() {
                         })
                     }
                 }
-                const matches = html.matchAll(/<img[^>]+src="([^"]+)"/g);
+                const matches = html.matchAll(/<img[^>]+src="(?!http)([^"]+)"/g);
                 for (const match of matches) {
                     srcList.push(match[1]);
                 }
