@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
-import {Button, Divider, Image, Input, Menu, Notification, Space, Tooltip} from '@arco-design/web-react';
+import {Button, Divider, Empty, Image, Input, Menu, Notification, Space, Tooltip} from '@arco-design/web-react';
 import {
+    IconBook,
     IconCloudDownload,
     IconMoon,
     IconSearch,
@@ -363,11 +364,27 @@ function App() {
             </Space>
             <h2 className="title">{summaryMap.title[cate] || ``}</h2>
             <Divider/>
-            <div className="stage">
-                <div className={["mdTxt", "s" + mdSize].join(" ")} dangerouslySetInnerHTML={{__html: doc.content}}/>
-                {doc.detail !== '' &&
-                    <div className={["mdTxt", "s" + mdSize].join(" ")} dangerouslySetInnerHTML={{__html: doc.detail}}/>}
-            </div>
+            {
+                doc.content !== '' ?
+                    <div className="stage">
+                        <div className={["mdTxt", "s" + mdSize].join(" ")}
+                             dangerouslySetInnerHTML={{__html: doc.content}}/>
+                        {doc.detail !== '' &&
+                            <div className={["mdTxt", "s" + mdSize].join(" ")}
+                                 dangerouslySetInnerHTML={{__html: doc.detail}}/>}
+                    </div> :
+                    <div className="stage">
+                        <Empty icon={<IconBook/>} description={
+                            <div>
+                                <p>没有找到文档</p>
+                                <p>请将阅读器放在文档根目录位置，如下结构</p>
+                                <p> /exbook.exe - 阅读器 </p>
+                                <p> /docs/assets - 资源文件 </p>
+                                <p> /docs/mds - 文档md文件 </p>
+                            </div>
+                        }/>
+                    </div>
+            }
         </div>
     </div>
 }
