@@ -32,6 +32,9 @@ func main() {
 		Bind: []interface{}{
 			app,
 		},
+		//Windows: &windows.Options{
+		//	WebviewBrowserPath: "Z:\\Workspace\\desktop\\Microsoft.WebView2.FixedVersionRuntime.137.0.3296.93.x64",
+		//},
 	})
 
 	if err != nil {
