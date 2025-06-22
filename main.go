@@ -2,10 +2,11 @@ package main
 
 import (
 	"embed"
-	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/menu"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
+	"os"
 )
 
 //go:embed all:frontend/dist
@@ -17,6 +18,15 @@ func main() {
 
 	// Menu
 	m := menu.NewMenu()
+
+	// options
+	windowsOptions := &windows.Options{}
+	// webview2 core
+	pwd, _ := os.Getwd()
+	wv2 := pwd + "/../Microsoft.WebView2.FixedVersionRuntime.137.0.3296.93.x64"
+	if isDir(wv2) {
+		windowsOptions.WebviewBrowserPath = wv2
+	}
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -32,9 +42,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 		},
-		//Windows: &windows.Options{
-		//	WebviewBrowserPath: "Z:\\Workspace\\desktop\\Microsoft.WebView2.FixedVersionRuntime.137.0.3296.93.x64",
-		//},
+		Windows: windowsOptions,
 	})
 
 	if err != nil {
