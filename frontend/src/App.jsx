@@ -1,4 +1,6 @@
 import {useEffect, useState} from 'react';
+
+// arco-design
 import {Button, Divider, Empty, Image, Input, Menu, Notification, Space, Tooltip} from '@arco-design/web-react';
 import {
     IconBook,
@@ -11,6 +13,11 @@ import {
     IconZoomOut
 } from '@arco-design/web-react/icon';
 import "@arco-design/web-react/dist/css/arco.css";
+
+// mantine
+import '@mantine/core/styles.css';
+import {MantineProvider} from '@mantine/core';
+
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import './App.less';
@@ -268,125 +275,127 @@ function App() {
             }
         })
     }
-    return <div id="app" className={style}>
-        <Image id="bigImg" src={img.src} alt={img.alt}/>
-        <div className="sponsor" onClick={() => BrowserOpenURL("https://www.hunzsig.com")}>
-            <div>支持开发者</div>
-            <IconThumbUp/>
-            <IconThumbUp/>
-            <IconThumbUp/>
-            <IconThumbUp/>
-            <IconThumbUp/>
-        </div>
-        <div className="cate">
-            <div className="search">
-                <Input
-                    size="small"
-                    prefix={<IconSearch/>}
-                    placeholder="在此搜索"
-                    onChange={(val) => {
-                        findWord = val.toLowerCase();
-                        setFindWord(findWord);
-                        parseSummary();
-                        open(cate);
-                    }}
-                />
+    return <MantineProvider>
+        <div id="app" className={style}>
+            <Image id="bigImg" src={img.src} alt={img.alt}/>
+            <div className="sponsor" onClick={() => BrowserOpenURL("https://www.hunzsig.com")}>
+                <div>支持开发者</div>
+                <IconThumbUp/>
+                <IconThumbUp/>
+                <IconThumbUp/>
+                <IconThumbUp/>
+                <IconThumbUp/>
             </div>
-            <Menu className="summary" mode='vertical' selectedKeys={[cate]}>
-                {renderMenu(summary)}
-            </Menu>
-        </div>
-        <div className="md">
-            <Space size='large' className="tools">
-                <Input
-                    className="folder"
-                    size="small"
-                    addBefore='文档根'
-                    searchButton={<IconCloudDownload/> + '读取文档'}
-                    value={folder}
-                    placeholder='默认/docs'
-                    onChange={(val) => {
-                        setFolder(val)
-                    }}
-                />
-                <Button.Group>
-                    <Tooltip position='bottom' trigger='hover' content='更新md文档到阅读器'>
-                        <Button type='primary'
-                                icon={<IconCloudDownload/>}
-                                disabled={refreshing}
-                                loading={refreshing}
-                                onClick={() => {
-                                    setRefreshing(true);
-                                    // 正常刷新完再过300毫秒恢复，最长5000毫秒恢复刷新状态
-                                    sleep(5000).then(() => {
-                                        setRefreshing(false);
-                                    })
-                                    setConf(folder, style, mdSize, cate, () => {
-                                        refresh(true);
-                                    });
-                                }}>读取文档</Button>
-                    </Tooltip>
-                    <Tooltip position='bottom' trigger='hover' content='主题色调'>
+            <div className="cate">
+                <div className="search">
+                    <Input
+                        size="small"
+                        prefix={<IconSearch/>}
+                        placeholder="在此搜索"
+                        onChange={(val) => {
+                            findWord = val.toLowerCase();
+                            setFindWord(findWord);
+                            parseSummary();
+                            open(cate);
+                        }}
+                    />
+                </div>
+                <Menu className="summary" mode='vertical' selectedKeys={[cate]}>
+                    {renderMenu(summary)}
+                </Menu>
+            </div>
+            <div className="md">
+                <Space size='large' className="tools">
+                    <Input
+                        className="folder"
+                        size="small"
+                        addBefore='文档根'
+                        searchButton={<IconCloudDownload/> + '读取文档'}
+                        value={folder}
+                        placeholder='默认/docs'
+                        onChange={(val) => {
+                            setFolder(val)
+                        }}
+                    />
+                    <Button.Group>
+                        <Tooltip position='bottom' trigger='hover' content='更新md文档到阅读器'>
+                            <Button type='primary'
+                                    icon={<IconCloudDownload/>}
+                                    disabled={refreshing}
+                                    loading={refreshing}
+                                    onClick={() => {
+                                        setRefreshing(true);
+                                        // 正常刷新完再过300毫秒恢复，最长5000毫秒恢复刷新状态
+                                        sleep(5000).then(() => {
+                                            setRefreshing(false);
+                                        })
+                                        setConf(folder, style, mdSize, cate, () => {
+                                            refresh(true);
+                                        });
+                                    }}>读取文档</Button>
+                        </Tooltip>
+                        <Tooltip position='bottom' trigger='hover' content='主题色调'>
+                            <Button
+                                type='primary'
+                                icon={style === 'light' ? <IconSun/> : <IconMoon/>}
+                                onClick={() => setStyle(() => {
+                                    const v = style === 'light' ? 'dark' : 'light'
+                                    if (v === 'dark') {
+                                        document.body.setAttribute('arco-theme', 'dark');
+                                    } else {
+                                        document.body.removeAttribute('arco-theme');
+                                    }
+                                    setConf(folder, v, mdSize, cate);
+                                    return v;
+                                })}
+                            >{style === 'light' ? '明亮' : '暗黑'}</Button>
+                        </Tooltip>
                         <Button
-                            type='primary'
-                            icon={style === 'light' ? <IconSun/> : <IconMoon/>}
-                            onClick={() => setStyle(() => {
-                                const v = style === 'light' ? 'dark' : 'light'
-                                if (v === 'dark') {
-                                    document.body.setAttribute('arco-theme', 'dark');
-                                } else {
-                                    document.body.removeAttribute('arco-theme');
-                                }
-                                setConf(folder, v, mdSize, cate);
+                            type='secondary'
+                            icon={<IconZoomOut/>}
+                            disabled={mdSize <= 1}
+                            onClick={() => setMDSize(() => {
+                                const v = mdSize - 1
+                                setConf(folder, style, v, cate);
                                 return v;
-                            })}
-                        >{style === 'light' ? '明亮' : '暗黑'}</Button>
-                    </Tooltip>
-                    <Button
-                        type='secondary'
-                        icon={<IconZoomOut/>}
-                        disabled={mdSize <= 1}
-                        onClick={() => setMDSize(() => {
-                            const v = mdSize - 1
-                            setConf(folder, style, v, cate);
-                            return v;
-                        })}></Button>
-                    <Button
-                        type='secondary'
-                        icon={<IconZoomIn/>}
-                        disabled={mdSize >= 5}
-                        onClick={() => setMDSize(() => {
-                            const v = mdSize + 1
-                            setConf(folder, style, v, cate);
-                            return v;
-                        })}></Button>
-                </Button.Group>
-            </Space>
-            <h2 className="title">{summaryMap.title[cate] || ``}</h2>
-            <Divider/>
-            {
-                doc.content !== '' ?
-                    <div className="stage">
-                        <div className={["mdTxt", "s" + mdSize].join(" ")}
-                             dangerouslySetInnerHTML={{__html: doc.content}}/>
-                        {doc.detail !== '' &&
+                            })}></Button>
+                        <Button
+                            type='secondary'
+                            icon={<IconZoomIn/>}
+                            disabled={mdSize >= 5}
+                            onClick={() => setMDSize(() => {
+                                const v = mdSize + 1
+                                setConf(folder, style, v, cate);
+                                return v;
+                            })}></Button>
+                    </Button.Group>
+                </Space>
+                <h2 className="title">{summaryMap.title[cate] || ``}</h2>
+                <Divider/>
+                {
+                    doc.content !== '' ?
+                        <div className="stage">
                             <div className={["mdTxt", "s" + mdSize].join(" ")}
-                                 dangerouslySetInnerHTML={{__html: doc.detail}}/>}
-                    </div> :
-                    <div className="stage">
-                        <Empty icon={<IconBook/>} description={
-                            <div>
-                                <p>没有找到文档</p>
-                                <p>请将阅读器放在文档根目录位置，如下结构</p>
-                                <p> /exbook.exe - 阅读器 </p>
-                                <p> /docs/assets - 资源文件 </p>
-                                <p> /docs/mds - 文档md文件 </p>
-                            </div>
-                        }/>
-                    </div>
-            }
+                                 dangerouslySetInnerHTML={{__html: doc.content}}/>
+                            {doc.detail !== '' &&
+                                <div className={["mdTxt", "s" + mdSize].join(" ")}
+                                     dangerouslySetInnerHTML={{__html: doc.detail}}/>}
+                        </div> :
+                        <div className="stage">
+                            <Empty icon={<IconBook/>} description={
+                                <div>
+                                    <p>没有找到文档</p>
+                                    <p>请将阅读器放在文档根目录位置，如下结构</p>
+                                    <p> /exbook.exe - 阅读器 </p>
+                                    <p> /docs/assets - 资源文件 </p>
+                                    <p> /docs/mds - 文档md文件 </p>
+                                </div>
+                            }/>
+                        </div>
+                }
+            </div>
         </div>
-    </div>
+    </MantineProvider>
 }
 
 export default App
