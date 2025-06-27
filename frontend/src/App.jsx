@@ -200,9 +200,6 @@ function App() {
             summary = v;
             setSummary(summary);
             parseSummary();
-            sleep(300).then(() => {
-                setRefreshing(false);
-            })
             GetConf().then((v) => {
                 if (v.folder !== folder) {
                     setFolder(v.folder)
@@ -234,6 +231,9 @@ function App() {
                         open(firstCate(summary));
                     }
                 }
+            })
+            sleep(1000).then(() => {
+                setRefreshing(false);
             })
         })
     }
@@ -268,7 +268,7 @@ function App() {
             }
         })
     }
-    return <div id="app" className={style}>
+    return <div id="app">
         <Image id="bigImg" src={img.src} alt={img.alt}/>
         <div className="sponsor" onClick={() => BrowserOpenURL("https://www.hunzsig.com")}>
             <div>支持开发者</div>
@@ -317,8 +317,8 @@ function App() {
                                 loading={refreshing}
                                 onClick={() => {
                                     setRefreshing(true);
-                                    // 正常刷新完再过300毫秒恢复，最长5000毫秒恢复刷新状态
-                                    sleep(5000).then(() => {
+                                    // 正常刷新完再过1000毫秒恢复，最长7500毫秒恢复刷新状态
+                                    sleep(7500).then(() => {
                                         setRefreshing(false);
                                     })
                                     setConf(folder, style, mdSize, cate, () => {

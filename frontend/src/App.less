@@ -1,13 +1,32 @@
 body:not([arco-theme]) {
-  --ex-sponsor-txt: #eeeeee;
+  --ex-sponsor-txt: #eee;
   --ex-sponsor-bg: #ff004d;
   --ex-sponsor-hover: #ff3d74;
+  --ex-md-pre-bg: #333;
+  --ex-md-pre-txt: #fff;
+  --ex-md-blockquote-bl: rgb(var(--primary-4));
+  --ex-md-blockquote-bg: #f4f7f9;
+  --ex-md-h1: rgb(var(--primary-6));
+  --ex-md-a: rgb(var(--primary-5));
+  --ex-md-labal-bg: rgb(var(--primary-5));
+  --ex-md-labal-txt: #fff;
+  --ex-md-table-bg: #ddd;
+  --ex-md-th-bg: #ddd;
 }
 
 body[arco-theme='dark'] {
   --ex-sponsor-txt: #666666;
   --ex-sponsor-bg: #ffcc00;
-  --ex-sponsor-hover: #ffda46;
+  --ex-sponsor-hover: #fddc57;
+  --ex-md-pre-bg: #fdfdfd;
+  --ex-md-pre-txt: #272727;
+  --ex-md-blockquote-bl: #ffdc3c;
+  --ex-md-blockquote-bg: #272727;
+  --ex-md-h1: #ffdc3c;
+  --ex-md-a: #fddc57;
+  --ex-md-labal-bg: #ffdc3c;
+  --ex-md-labal-txt: #000;
+  --ex-md-th-bg: #555;
 }
 
 #app {
@@ -130,7 +149,6 @@ body[arco-theme='dark'] {
         overflow-y: scroll;
         //margin-bottom: 2vh;
         padding: 0 7vh 2vh 5vh;
-        border-right: 1px solid #bbbbbb;
 
         table {
           border-collapse: collapse;
@@ -140,7 +158,7 @@ body[arco-theme='dark'] {
           th {
             border: 1px solid #bbbbbb;
             padding: 10px 20px;
-            background: #555555;
+            background: var(--ex-md-th-bg);
           }
 
           tr {
@@ -155,9 +173,13 @@ body[arco-theme='dark'] {
 
         }
 
+        h1 {
+          color: var(--ex-md-h1);
+        }
+
         a {
           font-weight: 700;
-          color: #ffdc3c;
+          color: var(--ex-md-a);
           cursor: pointer;
         }
 
@@ -179,8 +201,8 @@ body[arco-theme='dark'] {
         blockquote {
           margin: 10px 0;
           padding: 2px 0 2px 12px;
-          border-left: 3px #ffdc3c solid;
-          background: #272727;
+          border-left: 3px var(--ex-md-blockquote-bl) solid;
+          background: var(--ex-md-blockquote-bg);
 
           p {
             margin: 10px 0;
@@ -189,17 +211,17 @@ body[arco-theme='dark'] {
         }
 
         code:not(pre code) {
-          background: #ffdc3c;
           border-radius: 8px;
           padding: 3px 5px;
           margin: 0 2px;
-          color: #000000;
+          background: var(--ex-md-labal-bg);
+          color: var(--ex-md-labal-txt);
         }
 
         pre {
           border-radius: 4px;
-          background: #fdfdfd;
-          color: #272727;
+          background: var(--ex-md-pre-bg);
+          color: var(--ex-md-pre-txt);
 
           code {
             border-radius: 4px;
@@ -240,42 +262,6 @@ body[arco-theme='dark'] {
 
       .mdTxt.s5 {
         font-size: 135%;
-      }
-    }
-  }
-}
-
-#app.light {
-
-  .md {
-    .stage {
-      .mdTxt {
-        border-right: 1px solid #dddddd;
-
-        pre {
-          background: #333;
-          color: #ffffff
-        }
-
-        blockquote {
-          border-left: 3px rgb(var(--primary-4)) solid;
-          background: #f4f7f9;
-        }
-
-        h1, a {
-          color: rgb(var(--primary-6));
-        }
-
-        code:not(pre code) {
-          background: rgb(var(--primary-5));
-          color: #ffffff;
-        }
-
-        table {
-          th {
-            background: #dddddd;
-          }
-        }
       }
     }
   }
