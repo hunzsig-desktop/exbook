@@ -207,9 +207,6 @@ function App() {
             summary = v;
             setSummary(summary);
             parseSummary();
-            sleep(300).then(() => {
-                setRefreshing(false);
-            })
             GetConf().then((v) => {
                 if (v.folder !== folder) {
                     setFolder(v.folder)
@@ -241,6 +238,9 @@ function App() {
                         open(firstCate(summary));
                     }
                 }
+            })
+            sleep(1000).then(() => {
+                setRefreshing(false);
             })
         })
     }
@@ -275,8 +275,9 @@ function App() {
             }
         })
     }
+
     return <MantineProvider>
-        <div id="app" className={style}>
+        <div id="app">
             <Image id="bigImg" src={img.src} alt={img.alt}/>
             <div className="sponsor" onClick={() => BrowserOpenURL("https://www.hunzsig.com")}>
                 <div>支持开发者</div>
