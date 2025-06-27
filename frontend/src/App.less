@@ -1,3 +1,15 @@
+body[arco-theme='light'] {
+  --sponsor-txt-1: #eeeeee;
+  --sponsor-bg-1: #ff004d;
+  --sponsor-bg-2: #ff3d74;
+}
+
+body[arco-theme='dark'] {
+  --sponsor-txt-1: #666666;
+  --sponsor-bg-1: #ffcc00;
+  --sponsor-bg-2: #ffda46;
+}
+
 #app {
   display: flex;
   flex-direction: row;
@@ -26,8 +38,8 @@
     top: 2.7vh;
     height: 46px;
     padding: 0 6px;
-    background: #ffcc00;
-    color: #666666;
+    background: var(--sponsor-bg-1);
+    color: var(--sponsor-txt-1);
     border: 0;
     border-radius: 4px;
     cursor: pointer;
@@ -35,7 +47,7 @@
   }
 
   .sponsor:hover {
-    background: #ffda46;
+    background: var(--sponsor-bg-2);
   }
 
   .sponsor > .tabler-icon {
@@ -178,8 +190,9 @@
 
         code:not(pre code) {
           background: #ffdc3c;
-          border-radius: 10px 5px 10px 5px;
-          padding: 3px 6px;
+          border-radius: 8px;
+          padding: 3px 5px;
+          margin: 0 2px;
           color: #000000;
         }
 
@@ -233,14 +246,6 @@
 }
 
 #app.light {
-  .sponsor {
-    background: #ff004d;
-    color: #eeeeee;
-  }
-
-  .sponsor:hover {
-    background: #ff3d74;
-  }
 
   .md {
     .stage {

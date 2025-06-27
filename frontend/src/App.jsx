@@ -15,7 +15,7 @@ import {
 import "@arco-design/web-react/dist/css/arco.css";
 
 // mantine
-import '@mantine/core/styles.css';
+// import '@mantine/core/styles.css';
 import {MantineProvider} from '@mantine/core';
 
 import MarkdownIt from 'markdown-it';
