@@ -12,11 +12,68 @@ import {
     IconZoomIn,
     IconZoomOut
 } from '@arco-design/web-react/icon';
-import "@arco-design/web-react/dist/css/arco.css";
+// import "@arco-design/web-react/dist/css/arco.css";
 
 // mantine
-// import '@mantine/core/styles.css';
+import '@mantine/core/styles.css';
 import {MantineProvider} from '@mantine/core';
+
+
+import {
+    IconAdjustments,
+    IconCalendarStats,
+    IconFileAnalytics,
+    IconGauge,
+    IconLock,
+    IconNotes,
+    IconPresentationAnalytics,
+} from '@tabler/icons-react';
+import { Code, Group, ScrollArea } from '@mantine/core';
+import { LinksGroup } from './NavbarLinksGroup/NavbarLinksGroup';
+import { UserButton } from './UserButton/UserButton';
+import classes from './NavbarNested/NavbarNested.module.css';
+
+const mockdata = [
+    { label: 'Dashboard', icon: IconGauge },
+    {
+        label: 'Market news',
+        icon: IconNotes,
+        initiallyOpened: true,
+        links: [
+            { label: 'Overview', link: '/' },
+            { label: 'Forecasts', link: '/' },
+            { label: 'Outlook', link: '/' },
+            { label: 'Real time', link: '/' },
+        ],
+    },
+    {
+        label: 'Releases',
+        icon: IconCalendarStats,
+        links: [
+            { label: 'Upcoming releases', link: '/' },
+            { label: 'Previous releases', link: '/' },
+            { label: 'Releases schedule', link: '/' },
+        ],
+    },
+    { label: 'Analytics', icon: IconPresentationAnalytics },
+    { label: 'Contracts', icon: IconFileAnalytics },
+    { label: 'Settings', icon: IconAdjustments },
+    {
+        label: 'Security',
+        icon: IconLock,
+        links: [
+            { label: 'Enable 2FA', link: '/' },
+            { label: 'Change password', link: '/' },
+            { label: 'Recovery codes', link: '/' },
+        ],
+    },
+];
+
+
+
+
+
+
 
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
@@ -276,8 +333,27 @@ function App() {
         })
     }
 
+    const links = mockdata.map((item) => <LinksGroup {...item} key={item.label} />);
+
     return <MantineProvider>
         <div id="app">
+
+            <nav className={classes.navbar}>
+                <div className={classes.header}>
+                    <Group justify="space-between">
+                        <Code fw={700}>Exbook v2025.07</Code>
+                    </Group>
+                </div>
+
+                <ScrollArea className={classes.links}>
+                    <div className={classes.linksInner}>{links}</div>
+                </ScrollArea>
+
+                <div className={classes.footer}>
+                    <UserButton />
+                </div>
+            </nav>
+
             <Image id="bigImg" src={img.src} alt={img.alt}/>
             <div className="sponsor" onClick={() => BrowserOpenURL("https://www.hunzsig.com")}>
                 <div>支持开发者</div>
