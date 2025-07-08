@@ -1,7 +1,4 @@
 body:not([arco-theme]) {
-  --ex-sponsor-txt: #eee;
-  --ex-sponsor-bg: #ff004d;
-  --ex-sponsor-hover: #ff3d74;
   --ex-md-pre-bg: #333;
   --ex-md-pre-txt: #fff;
   --ex-md-blockquote-bl: rgb(var(--primary-4));
@@ -12,14 +9,11 @@ body:not([arco-theme]) {
 }
 
 body[arco-theme='dark'] {
-  --color-text-1: #cccccc;
+  --color-text-1: #dddddd;
   --primary-4: 255, 232, 151;
   --primary-5: 253, 220, 87;
   --primary-6: 255, 204, 0;
   --primary-7: 201, 162, 0;
-  --ex-sponsor-txt: #666666;
-  --ex-sponsor-bg: #ffcc00;
-  --ex-sponsor-hover: #fde897;
   --ex-md-pre-bg: #fdfdfd;
   --ex-md-pre-txt: #272727;
   --ex-md-blockquote-bl: #ffdc3c;
@@ -54,29 +48,23 @@ body[arco-theme='dark'] {
   }
 
   .sponsor {
-    display: compact;
-    position: fixed;
-    right: 1vw;
-    top: 2.7vh;
-    height: 46px;
-    padding: 0 6px;
-    background: var(--ex-sponsor-bg);
-    color: var(--ex-sponsor-txt);
-    border: 0;
-    border-radius: 4px;
-    cursor: pointer;
-    z-index: 99;
+    padding: 7px 0 7px 16px;
+    line-height: 2vh;
+    border-top: 1px solid var(--color-border-1);
+    background-color: var(--color-menu-light-bg);
+    color: var(--color-text-3);
+
+    div {
+      margin: 3px 0;
+    }
+
+    div:hover {
+      cursor: help;
+      text-decoration: underline;
+    }
   }
 
-  .sponsor:hover {
-    background: var(--ex-sponsor-hover);
-  }
-
-  .sponsor > .tabler-icon {
-    height: 20px;
-  }
-
-  .cate {
+  .nav {
     display: flex;
     flex-direction: column;
     max-width: 25%;
@@ -88,6 +76,7 @@ body[arco-theme='dark'] {
     }
 
     > .summary {
+      flex: 1;
       overflow-x: hidden;
       overflow-y: scroll;
 

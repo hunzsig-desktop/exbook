@@ -6,7 +6,6 @@ import {
     IconMoon,
     IconSearch,
     IconSun,
-    IconThumbUp,
     IconZoomIn,
     IconZoomOut
 } from '@arco-design/web-react/icon';
@@ -271,16 +270,8 @@ function App() {
     return <div id="app">
         {/*图片放大容器*/}
         <Image id="bigImg" src={img.src} alt={img.alt}/>
-        <div className="sponsor" onClick={() => BrowserOpenURL("https://www.hunzsig.com")}>
-            <div>支持开发者</div>
-            <IconThumbUp/>
-            <IconThumbUp/>
-            <IconThumbUp/>
-            <IconThumbUp/>
-            <IconThumbUp/>
-        </div>
         {/*左侧导航栏*/}
-        <div className="cate">
+        <div className="nav">
             <div className="search">
                 <Input
                     size="small"
@@ -297,6 +288,10 @@ function App() {
             <Menu className="summary" mode='vertical' selectedKeys={[cate]}>
                 {renderMenu(summary)}
             </Menu>
+            <div className="sponsor">
+                <div onClick={() => BrowserOpenURL("https://www.hunzsig.com/exbook-log")}>软件版本 ver.2025.7</div>
+                <div onClick={() => BrowserOpenURL("https://www.hunzsig.com/donate")}>支持作者 www.hunzsig.com</div>
+            </div>
         </div>
         <div className="md">
             <Space size='large' className="tools">
