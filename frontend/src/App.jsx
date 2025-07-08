@@ -262,7 +262,8 @@ function App() {
             } else {
                 return <Menu.SubMenu
                     key={k}
-                    title={summaryMap.title[k]}
+                    title={<><IconBook/> {summaryMap.title[k]}</>}
+                    icons={<IconBook/>}
                     className={summaryMap.isShow[k] !== true ? 'wf2' : ''}>{renderMenu(v.children)}</Menu.SubMenu>
             }
         })
