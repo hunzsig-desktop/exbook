@@ -120,17 +120,28 @@ function App() {
                     })();
 
                     // pre code
-                    document.querySelectorAll('pre code.language-lua').forEach((codeBlock) => {
+                    document.querySelectorAll('pre code').forEach((codeBlock) => {
                         const preElement = codeBlock.parentElement;
-                        const copy = preElement.getElementsByClassName('code-copy')
+                        const copy = preElement.getElementsByClassName('pre-code-copy')
                         if (copy.length === 0) {
-                            const copyButton = document.createElement('button');
-                            copyButton.className = 'code-copy';
-                            copyButton.textContent = '复制代码';
-                            copyButton.onclick = function () {
-                                clipboard(codeBlock.textContent);
+                            const btn = document.createElement('div');
+                            btn.className = 'pre-code-copy';
+                            btn.textContent = '复 制';
+                            btn.onclick = function () {
+                                const isCopied = clipboard(codeBlock.textContent);
+                                if (isCopied) {
+                                    Notification.success({
+                                        title: '复制成功',
+                                        content: '内容已复制到剪贴板',
+                                    })
+                                } else {
+                                    Notification.error({
+                                        title: '复制失败',
+                                        content: '无法复制内容到剪贴板，请再次尝试或手动复制',
+                                    })
+                                }
                             }
-                            preElement.insertBefore(copyButton, codeBlock);
+                            preElement.insertBefore(btn, codeBlock);
                         }
                     });
                 });

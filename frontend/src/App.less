@@ -10,6 +10,7 @@ body:not([arco-theme]) {
 
 body[arco-theme='dark'] {
   --color-text-1: #dddddd;
+  --color-secondary: #333333;
   --primary-4: 255, 232, 151;
   --primary-5: 253, 220, 87;
   --primary-6: 255, 204, 0;
@@ -209,6 +210,7 @@ body[arco-theme='dark'] {
         }
 
         pre {
+          position: relative;
           border-radius: 4px;
           background: var(--ex-md-pre-bg);
           color: var(--ex-md-pre-txt);
@@ -217,9 +219,26 @@ body[arco-theme='dark'] {
             border-radius: 4px;
             display: block;
             overflow-x: auto;
-            padding: 1em;
+            padding: 1.6em 1em 1em 1em;
             word-break: break-all;
             white-space: pre-wrap;
+          }
+
+          .pre-code-copy {
+            font-family: "PingFang", sans-serif;
+            position: absolute;
+            top: 0.4vh;
+            right: 0.4vh;
+            padding: 2px 4px;
+            border-radius: 0.2vw;
+            background-color: var(--color-secondary);
+            color: var(--color-text-1);
+            opacity: 0.5;
+            cursor: pointer;
+          }
+
+          .pre-code-copy:hover {
+            opacity: 1;
           }
         }
 
