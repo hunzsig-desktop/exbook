@@ -339,24 +339,28 @@ function App() {
                             })}
                         >{style === 'light' ? '明亮' : '暗黑'}</Button>
                     </Tooltip>
-                    <Button
-                        type='secondary'
-                        icon={<IconZoomOut/>}
-                        disabled={mdSize <= 1}
-                        onClick={() => setMDSize(() => {
-                            const v = mdSize - 1
-                            setConf(folder, style, v, cate);
-                            return v;
-                        })}></Button>
-                    <Button
-                        type='secondary'
-                        icon={<IconZoomIn/>}
-                        disabled={mdSize >= 5}
-                        onClick={() => setMDSize(() => {
-                            const v = mdSize + 1
-                            setConf(folder, style, v, cate);
-                            return v;
-                        })}></Button>
+                    <Tooltip position='bottom' trigger='hover' content='字号缩小'>
+                        <Button
+                            type='secondary'
+                            icon={<IconZoomOut/>}
+                            disabled={mdSize <= 1}
+                            onClick={() => setMDSize(() => {
+                                const v = mdSize - 1
+                                setConf(folder, style, v, cate);
+                                return v;
+                            })}></Button>
+                    </Tooltip>
+                    <Tooltip position='bottom' trigger='hover' content='字号放大'>
+                        <Button
+                            type='secondary'
+                            icon={<IconZoomIn/>}
+                            disabled={mdSize >= 5}
+                            onClick={() => setMDSize(() => {
+                                const v = mdSize + 1
+                                setConf(folder, style, v, cate);
+                                return v;
+                            })}></Button>
+                    </Tooltip>
                 </Button.Group>
             </Space>
             <h2 className="title">{summaryMap.title[cate] || ``}</h2>

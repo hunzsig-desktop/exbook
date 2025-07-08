@@ -123,9 +123,9 @@ body[arco-theme='dark'] {
       height: 30px;
       line-height: 30px;
       margin: 0;
-      padding: 1vh 7vh 0 3vh;
+      padding: 2vh 0 0 3vh;
       z-index: 1;
-      color: var(--color-text-2);
+      color: var(--color-text-1);
     }
 
     .stage {
@@ -139,8 +139,8 @@ body[arco-theme='dark'] {
         flex: 1;
         overflow-x: hidden;
         overflow-y: scroll;
-        //margin-bottom: 2vh;
-        padding: 0 7vh 2vh 5vh;
+        padding: 0 6vh 3vh 6vh;
+        border-right: 2px dashed #555555;
 
         table {
           border-collapse: collapse;
@@ -234,6 +234,10 @@ body[arco-theme='dark'] {
           text-shadow: -1px 0 #555555, 0 1px #555555, 1px 0 #555555,0 -1px #555555;
         }
 
+      }
+
+      .mdTxt:last-child{
+        border-right: 0;
       }
 
       .mdTxt.s1 {
