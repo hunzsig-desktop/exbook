@@ -10,6 +10,15 @@
     src: url('assets/fonts/FiraCode-Regular.ttf');
 }
 
+::-webkit-scrollbar {
+    width: 0.3vh;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #555555;
+}
+
 html {
     background-color: var(--color-bg-1);
 }
@@ -27,11 +36,6 @@ code {
     font-family: "Fira", sans-serif !important;
 }
 
-::-webkit-scrollbar {
-    width: 0.3vh;
-}
-
-::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    background-color: #555555;
+.arco-menu-indent {
+    width: 30px!important;
 }

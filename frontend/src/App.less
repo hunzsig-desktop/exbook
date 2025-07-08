@@ -6,27 +6,30 @@ body:not([arco-theme]) {
   --ex-md-pre-txt: #fff;
   --ex-md-blockquote-bl: rgb(var(--primary-4));
   --ex-md-blockquote-bg: #f4f7f9;
-  --ex-md-h1: rgb(var(--primary-6));
-  --ex-md-a: rgb(var(--primary-5));
-  --ex-md-labal-bg: rgb(var(--primary-5));
   --ex-md-labal-txt: #fff;
   --ex-md-table-bg: #ddd;
   --ex-md-th-bg: #ddd;
 }
 
 body[arco-theme='dark'] {
+  --color-text-1: #cccccc;
+  --primary-4: 255, 232, 151;
+  --primary-5: 253, 220, 87;
+  --primary-6: 255, 204, 0;
+  --primary-7: 201, 162, 0;
   --ex-sponsor-txt: #666666;
   --ex-sponsor-bg: #ffcc00;
-  --ex-sponsor-hover: #fddc57;
+  --ex-sponsor-hover: #fde897;
   --ex-md-pre-bg: #fdfdfd;
   --ex-md-pre-txt: #272727;
   --ex-md-blockquote-bl: #ffdc3c;
   --ex-md-blockquote-bg: #272727;
-  --ex-md-h1: #ffdc3c;
-  --ex-md-a: #fddc57;
-  --ex-md-labal-bg: #ffdc3c;
   --ex-md-labal-txt: #000;
   --ex-md-th-bg: #555;
+
+  .arco-btn-primary:not(.arco-btn-disabled), .arco-btn-primary.arco-btn-disabled, .arco-btn-primary:not(.arco-btn-disabled):hover, .arco-btn-primary:not(.arco-btn-disabled):focus {
+    color: #000000;
+  }
 }
 
 #app {
@@ -174,12 +177,12 @@ body[arco-theme='dark'] {
         }
 
         h1 {
-          color: var(--ex-md-h1);
+          color: rgb(var(--primary-6));
         }
 
         a {
           font-weight: 700;
-          color: var(--ex-md-a);
+          color: rgb(var(--primary-5));
           cursor: pointer;
         }
 
@@ -214,7 +217,7 @@ body[arco-theme='dark'] {
           border-radius: 8px;
           padding: 3px 5px;
           margin: 0 2px;
-          background: var(--ex-md-labal-bg);
+          background: rgb(var(--primary-4));
           color: var(--ex-md-labal-txt);
         }
 

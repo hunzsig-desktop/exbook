@@ -190,6 +190,9 @@ function App() {
     }
     const refresh = (isNotify) => {
         Document().then((v) => {
+            sleep(1000).then(() => {
+                setRefreshing(false);
+            })
             if (v === null) {
                 Notification.error({
                     title: '读取错误',
@@ -232,9 +235,6 @@ function App() {
                     }
                 }
             })
-            sleep(1000).then(() => {
-                setRefreshing(false);
-            })
         })
     }
     const setConf = (folder, theme, mdSize, cate, call) => {
@@ -269,6 +269,7 @@ function App() {
         })
     }
     return <div id="app">
+        {/*图片放大容器*/}
         <Image id="bigImg" src={img.src} alt={img.alt}/>
         <div className="sponsor" onClick={() => BrowserOpenURL("https://www.hunzsig.com")}>
             <div>支持开发者</div>
@@ -278,6 +279,7 @@ function App() {
             <IconThumbUp/>
             <IconThumbUp/>
         </div>
+        {/*左侧导航栏*/}
         <div className="cate">
             <div className="search">
                 <Input
