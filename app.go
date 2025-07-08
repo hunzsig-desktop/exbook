@@ -37,8 +37,8 @@ func (a *App) Document() []md {
 }
 
 // AssetsBase64 Get Base64
-func (a *App) AssetsBase64(src []string) map[string]string {
-	return mdAssets(src)
+func (a *App) AssetsBase64(src string) string {
+	return mdAssetBySrc(src)
 }
 
 func (a *App) GetConf() ConfJson {

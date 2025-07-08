@@ -12,10 +12,12 @@ import {
 import "@arco-design/web-react/dist/css/arco.css";
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
-import './App.less';
-import './hlst.less';
+import clipboard from 'copy-to-clipboard';
 import {AssetsBase64, Document, GetConf, SetConf} from "../wailsjs/go/main/App";
 import {BrowserOpenURL} from "../wailsjs/runtime";
+import LoadingBase64 from './LoadingBase64.jsx'
+import './App.less';
+import './hlst.less';
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -51,21 +53,24 @@ function App() {
         },
     })
     mi.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-        const href = tokens[idx].attrGet('href')
+        const href = tokens[idx].attrGet('href') || ''
         const t1 = tokens[idx + 1]
         let content = '点击'
         if (undefined !== t1 && t1.type === "text") {
             content = t1.content
             t1.content = ''
         }
-        return `<a onclick="document.openbrowser('${href}')">${content}</a>`
+        if (href[0].startsWith('/')) {
+            return `<a href="${href}">${content}</a>`
+        } else {
+            return `<a onclick="document.openbrowser('${href}')">${content}</a>`
+        }
     }
 
     const open = (key) => {
         if (typeof key === 'string' && key !== '') {
             setCate(key)
             setConf(folder, style, mdSize, key);
-            let srcList = [];
             const _html = (str) => {
                 let html = mi.render(str)
                 if (findWord.length > 0) {
@@ -78,42 +83,59 @@ function App() {
                         })
                     }
                 }
-                const matches = html.matchAll(/<img[^>]+src="(?!http)([^"]+)"/g);
-                for (const match of matches) {
-                    srcList.push(match[1]);
-                }
                 return html
             }
             let c = _html(summaryMap.content[key] || ``)
             let d = _html(summaryMap.detail[key] || ``)
-            srcList = [...new Set(srcList)];
             const writeDoc = () => {
                 setDoc({content: c, detail: d});
                 sleep(0).then(() => {
-                    const images = document.getElementsByTagName('img');
-                    for (const img of images) {
-                        if (img.id !== 'bigImg') {
-                            img.onclick = function (evt) {
-                                setImg({src: evt.target.src, alt: evt.target.alt});
-                                sleep(0).then(() => {
-                                    document.getElementById('bigImg').click();
-                                });
-                            };
+                    // big img
+                    (async () => {
+                        const images = document.getElementsByTagName('img');
+                        for (const img of images) {
+                            if (img.onclick === null && img.id !== 'bigImg') {
+                                const src = img.getAttribute('src')
+                                if (src.length > 0) {
+                                    if (src.startsWith('/')) {
+                                        img.onerror = (evt) => {
+                                            evt.target.src = LoadingBase64;
+                                            evt.target.onerror = null;
+                                        }
+                                        try {
+                                            img.src = await AssetsBase64(src);
+                                        } catch (error) {
+                                            console.error('Failed to convert image to base64:', error);
+                                        }
+                                    }
+                                    img.onclick = function (evt) {
+                                        setImg({src: evt.target.src, alt: evt.target.alt});
+                                        sleep(0).then(() => {
+                                            document.getElementById('bigImg').click();
+                                        });
+                                    };
+                                }
+                            }
                         }
-                    }
+                    })();
+
+                    // pre code
+                    document.querySelectorAll('pre code.language-lua').forEach((codeBlock) => {
+                        const preElement = codeBlock.parentElement;
+                        const copy = preElement.getElementsByClassName('code-copy')
+                        if (copy.length === 0) {
+                            const copyButton = document.createElement('button');
+                            copyButton.className = 'code-copy';
+                            copyButton.textContent = '复制代码';
+                            copyButton.onclick = function () {
+                                clipboard(codeBlock.textContent);
+                            }
+                            preElement.insertBefore(copyButton, codeBlock);
+                        }
+                    });
                 });
             }
-            if (srcList.length > 0) {
-                AssetsBase64(srcList).then((v) => {
-                    for (const k in v) {
-                        c = c.replaceAll(`src="${k}"`, `src="${v[k]}"`)
-                        d = d.replaceAll(`src="${k}"`, `src="${v[k]}"`)
-                    }
-                    writeDoc()
-                })
-            } else {
-                writeDoc()
-            }
+            writeDoc()
         }
     }
 
@@ -173,9 +195,9 @@ function App() {
             for (let i = 0; i < data.length; i++) {
                 const d = data[i]
                 if (d.children !== null) {
-                    const cate = firstCate(d.children)
-                    if (cate !== '') {
-                        return cate
+                    const cat = firstCate(d.children)
+                    if (cat !== '') {
+                        return cat
                     }
                 } else {
                     return d.key

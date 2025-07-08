@@ -47,23 +47,18 @@ func uriScheme(path string) string {
 }
 
 // 根据src获取对应的assets的base64数据
-func mdAssets(src []string) map[string]string {
-	result := make(map[string]string)
+func mdAssetBySrc(src string) string {
 	root := mdRoot()
-	for _, s := range src {
-		path := root + `/assets/` + s
-		var err error
-		path, err = filepath.Abs(path)
-		if err != nil {
-			result[s] = ""
-			continue
-		}
-		us := uriScheme(path)
-		im, _ := os.ReadFile(path)
-		str64 := base64.StdEncoding.EncodeToString(im)
-		result[s] = "data:" + us + ";base64," + str64
+	path := root + `/assets/` + src
+	var err error
+	path, err = filepath.Abs(path)
+	if err != nil {
+		return ""
 	}
-	return result
+	us := uriScheme(path)
+	im, _ := os.ReadFile(path)
+	str64 := base64.StdEncoding.EncodeToString(im)
+	return "data:" + us + ";base64," + str64
 }
 
 func md5str(str string) string {
